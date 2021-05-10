@@ -1,4 +1,8 @@
-source /usr/share/zsh-antigen/antigen.zsh
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  source /opt/homebrew/share/antigen/antigen.zsh
+else
+  source /usr/share/zsh-antigen/antigen.zsh
+fi
 antigen use oh-my-zsh
 
 antigen bundle git
@@ -24,21 +28,30 @@ alias gk='gitk --all --branches --word-diff'
 alias gg='git gui'
 alias gdto='git difftool -y'
 alias gsti='gst --ignored'
+alias tig='tig --all'
 
 # rust based tools
 alias rg='rg -p --no-heading -g "!tags" --no-ignore --follow'
-alias ske="sk -m | xargs -or vim"
-alias skg='sk --ansi -m -i -c "rg --color=always --line-number \"{}\"" | sed -r "s/([^:]+):([0-9]+)\:.*/\1:\2/" | xargs -or vim'
+alias ske="sk -m | xargs -or nvim"
+alias skg='sk --ansi -m -i -c "rg --color=always --line-number \"{}\"" | sed -r "s/([^:]+):([0-9]+)\:.*/\1:\2/" | xargs -or nvim'
 alias fd="fd --no-ignore"
 alias ll='exa -l --git -@'
 alias lla='exa -la --git -@'
-alias cat='bat -p'
 
 # lulz
 alias bwd='pwd | sed -e "s:/:🥖:g"'
 
-export PATH="${HOME}/.local/opt/adr-tools/src:${HOME}/Documents/3d_printing/sam-ba/sam-ba_2.18:${PATH}"
+export PATH="${HOME}/.local/opt/adr-tools/src:${PATH}"
+export PATH="${HOME}/.local/bin:${PATH}"
+
+# mac-os f-yeah
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  alias vim='nvim'
+  alias tig='tig --all'
+  export PATH="/Applications/ARM/bin:${PATH}"
+  export GPG_TTY=$(tty)
+
+  [ -f "/Users/${USER}/.ghcup/env" ] && source "/Users/${USER}/.ghcup/env" # ghcup-env
+fi
 
 stty -ixon
-
-eval "$(navi widget zsh)"

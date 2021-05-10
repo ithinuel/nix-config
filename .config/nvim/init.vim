@@ -22,7 +22,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 
 " markdown
-Plug 'plasticboy/vim-markdown'
+" Plug 'plasticboy/vim-markdown'
 Plug 'iamcco/markdown-preview.nvim'
 
 "
@@ -145,15 +145,22 @@ au FileType rust let b:AutoPairs = AutoPairsDefine({"r'" : "'", "b'" : "'"})
 let g:coc_snippets_next = '<tab>'
 let g:coc_snippets_prev = '<S-Tab>'
 
+" nerdcommenter alignment
+let g:NERDDefaultAlign = 'left'
+
 " =================================================================================================
 " Key map
 
-" bépo config
 let mapleader = ","
-noremap « <
-noremap » >
-noremap . :
-noremap : .
+
+" bépo config
+let s:uname = system("uname -s")
+if s:uname != "Darwin\n"
+    noremap « <
+    noremap » >
+    noremap . :
+    noremap : .
+endif
 
 " coc
 function! s:show_documentation()
@@ -189,7 +196,7 @@ xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
 " Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
+nmap <leader>ac  v<Plug>(coc-codeaction-selected)<C-C>
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
@@ -224,35 +231,37 @@ command! -nargs=? Fold   :call CocAction('fold', <f-args>)
 command! -nargs=0 OR     :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " confirm with enter & autoselect the first entry if none has been selected
-inoremap <silent><expr> <cr> 
-        \ pumvisible() ? coc#_select_confirm() :
-        \ "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 "autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-inoremap <silent><expr> <TAB> 
-        \ pumvisible() ? "\<C-n>" :
-        \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : coc#refresh()
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " buffer navigation
 map      <silent> <C-x>          <Plug>BufKillBangBd
-nnoremap <silent> <C-A-Left>     :bp<CR>
-nnoremap <silent> <C-A-Right>    :bn<CR>
-inoremap <silent> <C-A-Left>     <Esc>:bp<CR>i
-inoremap <silent> <C-A-Right>    <Esc>:bn<CR>i
+if s:uname != "Darwin\n"
+  nnoremap <silent> <C-A-Left>     :bp<CR>
+  nnoremap <silent> <C-A-Right>    :bn<CR>
+  inoremap <silent> <C-A-Left>     <Esc>:bp<CR>i
+  inoremap <silent> <C-A-Right>    <Esc>:bn<CR>i
+else
+  nnoremap <silent> <D-S-Left>     :bp<CR>
+  nnoremap <silent> <D-S-Right>    :bn<CR>
+  inoremap <silent> <D-S-Left>     <Esc>:bp<CR>i
+  inoremap <silent> <D-S-Right>    <Esc>:bn<CR>i
+endif
+
 nnoremap gp             <C-O>
 noremap  <silent> <C-o>          :SK<CR>
 inoremap <silent> <C-o>          <Esc>:SK<CR>
 
 " smart home
 noremap  <expr> <Home> (col('.') == matchend(getline('.'), '^\s*')+1 ? '0' : '^')
+imap <silent> <Home> <Esc><right><Home>i
 
 " re-yank what was pasted
 xnoremap p pgvy
