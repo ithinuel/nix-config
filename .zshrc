@@ -1,8 +1,12 @@
-if [[ ! -e $HOME/.local/bin/antigen.zsh ]]; then
-    curl -L git.io/antigen > $HOME/.local/bin/antigen.zsh
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    source /opt/homebrew/share/antigen/antigen.zsh
+else
+    if [[ ! -e "$HOME/.local/bin/antigen.zsh" ]]; then
+        curl -L git.io/antigen > $HOME/.local/bin/antigen.zsh
+    fi
+    source $HOME/.local/bin/antigen.zsh
 fi
 
-source $HOME/.local/bin/antigen.zsh
 antigen use oh-my-zsh
 
 antigen bundle git
