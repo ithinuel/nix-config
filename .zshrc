@@ -1,8 +1,8 @@
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  source /opt/homebrew/share/antigen/antigen.zsh
-else
-  source /usr/share/zsh-antigen/antigen.zsh
+if [[ ! -e $HOME/.local/bin/antigen.zsh ]]; then
+    curl -L git.io/antigen > $HOME/.local/bin/antigen.zsh
 fi
+
+source $HOME/.local/bin/antigen.zsh
 antigen use oh-my-zsh
 
 antigen bundle git
@@ -37,12 +37,15 @@ alias skg='sk --ansi -m -i -c "rg --color=always --line-number \"{}\"" | sed -r 
 alias fd="fd --no-ignore"
 alias ll='exa -l --git -@'
 alias lla='exa -la --git -@'
+alias cat='bat -p'
 
 # lulz
 alias bwd='pwd | sed -e "s:/:🥖:g"'
 
 export PATH="${HOME}/.local/opt/adr-tools/src:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
+
+[ ! -z "$(command -v navi)" ] && eval "$(navi widget zsh)"
 
 # mac-os f-yeah
 if [[ "$(uname -s)" == "Darwin" ]]; then

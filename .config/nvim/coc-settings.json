@@ -5,6 +5,11 @@
     "coc.preferences.formatOnSaveFiletypes": ["rust"],
     "suggest.noselect": false,
     "python.formatting.provider": "black",
-    "python.linting.flake8Enabled": true
+    "python.linting.flake8Enabled": true,
+    "markdownlint.config": {
+        "MD013": {
+            "line_length": 100
+        }
+    }
 }
 

@@ -22,8 +22,11 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 
 " markdown
-" Plug 'plasticboy/vim-markdown'
-Plug 'iamcco/markdown-preview.nvim'
+Plug 'plasticboy/vim-markdown'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarnpkg install' }
+
+" Table and code alignment
+Plug 'godlygeek/tabular'
 
 "
 " debugging
@@ -147,6 +150,10 @@ let g:coc_snippets_prev = '<S-Tab>'
 
 " nerdcommenter alignment
 let g:NERDDefaultAlign = 'left'
+
+" markdown preview
+" keep updating the page after switch back and forth between buffers
+let g:mkdp_auto_close = 0
 
 " =================================================================================================
 " Key map
