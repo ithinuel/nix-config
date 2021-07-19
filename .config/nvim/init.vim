@@ -13,9 +13,12 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 
+" just
+Plug 'NoahTheDuke/vim-just'
+
 " rust
 Plug 'cespare/vim-toml'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch':'release'}
 
 " git
 Plug 'tpope/vim-fugitive'
@@ -27,6 +30,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarnpkg install' }
 
 " Table and code alignment
 Plug 'godlygeek/tabular'
+"Plug 'junegunn/vim-easy-align'
 
 "
 " debugging
@@ -143,6 +147,9 @@ let g:airline_powerline_fonts = 1
 " auto-pair
 let g:AutoPairsMultilineClose = 0
 au FileType rust let b:AutoPairs = AutoPairsDefine({"r'" : "'", "b'" : "'"})
+
+" coc
+let g:coc_install_yarn_cmd = 'yarnpkg'
 
 " coc-snippets
 let g:coc_snippets_next = '<tab>'
@@ -282,6 +289,8 @@ xnoremap p pgvy
 "     au BufReadPost * setlocal bufhidden=
 " aug END
 
+au BufNewFile,BufRead *.vh set syntax=verilog
+
 " remove trailing spaces
 aug ClearTrailing
     au!
@@ -292,8 +301,6 @@ aug END
 aug MDSpellCheck
     au!
     au BufRead,BufNewFile *.md setlocal spell spelllang=en
-    au BufReadPre *.md setlocal textwidth=100
-    au BufReadPre *.md setlocal formatoptions+=a
     " au BufRead,BufNewFile *.md set wrap lbr
 aug END
 

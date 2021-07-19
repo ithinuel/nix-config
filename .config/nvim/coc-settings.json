@@ -1,8 +1,12 @@
 {
     "rust-analyzer.inlayHints.chainingHints": true,
     "rust-analyzer.inlayHints.typeHints": true,
-    "rust-analyzer.diagnostics.disabled": ["inactive-code"],
-    "coc.preferences.formatOnSaveFiletypes": ["rust"],
+    "rust-analyzer.diagnostics.disabled": [
+        "inactive-code"
+    ],
+    "coc.preferences.formatOnSaveFiletypes": [
+        "rust"
+    ],
     "suggest.noselect": false,
     "python.formatting.provider": "black",
     "python.linting.flake8Enabled": true,
@@ -10,6 +14,13 @@
         "MD013": {
             "line_length": 100
         }
+    },
+    "languageserver": {
+        "svls": {
+            "command": "svls",
+            "filetypes": [
+                "systemverilog"
+            ]
+        }
     }
 }
-

@@ -1,3 +1,4 @@
+# install antigen
 if [[ "$(uname -s)" == "Darwin" ]]; then
     source /opt/homebrew/share/antigen/antigen.zsh
 else
@@ -7,6 +8,8 @@ else
     source $HOME/.local/bin/antigen.zsh
 fi
 
+# ===============================================
+# Setup plugins
 antigen use oh-my-zsh
 
 antigen bundle git
@@ -16,23 +19,24 @@ antigen bundle python
 antigen bundle zpm-zsh/autoenv
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
 antigen bundle tonyseek/oh-my-zsh-virtualenv-prompt
 
 antigen theme "af-magic"
 antigen apply
-fpath+=~/.zfunc
+fpath+="${0:h}/.zfunc"
 
-export LC_ALL="fr_FR.UTF-8"
-export SKIM_DEFAULT_COMMAND="rg --follow --no-ignore --color=never --files || find ."
-
-export NAVI_FINDER="skim"
+# ===============================================
+# Setup aliases
 
 # git tools
+alias gs='git submodule'
 alias gk='gitk --all --branches --word-diff'
 alias gg='git gui'
 alias gdto='git difftool -y'
 alias gsti='gst --ignored'
 alias tig='tig --all'
+alias gfa='git fetch --all --recurse-submodules --prune'
 
 # rust based tools
 alias rg='rg -p --no-heading -g "!tags" --no-ignore --follow'
@@ -42,10 +46,18 @@ alias fd="fd --no-ignore"
 alias ll='exa -l --git -@'
 alias lla='exa -la --git -@'
 alias cat='bat -p'
+alias j='just'
 
 # lulz
 alias bwd='pwd | sed -e "s:/:🥖:g"'
 
+# ===============================================
+# Setup env
+
+export LC_ALL="fr_FR.UTF-8"
+export SKIM_DEFAULT_COMMAND="rg --hidden --follow --no-ignore --color=never --files || find ."
+
+export NAVI_FINDER="skim"
 export PATH="${HOME}/.local/opt/adr-tools/src:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
 
