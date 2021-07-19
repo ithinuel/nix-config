@@ -68,6 +68,9 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   alias vim='nvim'
   alias tig='tig --all'
   export PATH="/Applications/ARM/bin:${PATH}"
+  export PATH="/opt/homebrew/opt/bison/bin:$PATH"
+  export PATH="/opt/homebrew/opt/flex/bin:$PATH"
+  export PATH="$HOME/.local/opt/iverilog/bin:$PATH"
   export GPG_TTY=$(tty)
 
   [ -f "/Users/${USER}/.ghcup/env" ] && source "/Users/${USER}/.ghcup/env" # ghcup-env
