@@ -2,11 +2,11 @@
 ln -s $(dirname $0)/.zshrc $HOME/.zshrc
 
 # configure i3
-mkdir -p .config/i3
+mkdir -p $(dirname $0)/.config/i3
 ln -s $(dirname $0)/.config/i3/* $HOME/.config/i3/
 
 # configure nvim
-mkdir -p .config/nvim
+mkdir -p $(dirname $0)/.config/nvim
 ln -s $(dirname $0)/.config/nvim/* $HOME/.config/nvim/
 
 # Configure gdb
