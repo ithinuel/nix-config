@@ -3,7 +3,9 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     source /opt/homebrew/share/antigen/antigen.zsh
 else
     if [[ ! -e "$HOME/.local/bin/antigen.zsh" ]]; then
+	mkdir -p $HOME/.local/bin
         curl -L git.io/antigen > $HOME/.local/bin/antigen.zsh
+	chmod u+x $HOME/.local/bin/antigen.zsh
     fi
     source $HOME/.local/bin/antigen.zsh
 fi
@@ -58,7 +60,6 @@ export LC_ALL="fr_FR.UTF-8"
 export SKIM_DEFAULT_COMMAND="rg --hidden --follow --no-ignore --color=never --files || find ."
 
 export NAVI_FINDER="skim"
-export PATH="${HOME}/.local/opt/adr-tools/src:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
 
 [ ! -z "$(command -v navi)" ] && eval "$(navi widget zsh)"
