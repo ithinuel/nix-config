@@ -111,19 +111,34 @@ set $ws10 "10"
 set $ws11 "11"
 set $ws12 "12"
 
-# switch to workspace
-bindsym $mod+quotedbl workspace $ws1
-bindsym $mod+guillemotleft workspace $ws2
-bindsym $mod+guillemotright workspace $ws3
-bindsym $mod+parenleft workspace $ws4
-bindsym $mod+parenright workspace $ws5
-bindsym $mod+at workspace $ws6
-bindsym $mod+plus workspace $ws7
-bindsym $mod+minus workspace $ws8
-bindsym $mod+slash workspace $ws9
-bindsym $mod+asterisk workspace $ws10
-bindsym $mod+equal workspace $ws11
-bindsym $mod+percent workspace $ws12
+# get keymap using: xmodmap -pke
+# switch to workspace with azerty
+bindsym $mod+ampersand workspace $ws1
+bindsym $mod+eacute workspace $ws2
+bindsym $mod+quotedbl workspace $ws3
+bindsym $mod+apostrophe workspace $ws4
+bindsym $mod+parenleft workspace $ws5
+bindsym $mod+minus workspace $ws6
+bindsym $mod+egrave workspace $ws7
+bindsym $mod+underscore workspace $ws8
+bindsym $mod+ccedilla workspace $ws9
+bindsym $mod+agrave workspace $ws10
+bindsym $mod+parenright workspace $ws11
+bindsym $mod+equal workspace $ws12
+
+# switch to workspace with bepo layout
+#bindsym $mod+quotedbl workspace $ws1
+#bindsym $mod+guillemotleft workspace $ws2
+#bindsym $mod+guillemotright workspace $ws3
+#bindsym $mod+parenleft workspace $ws4
+#bindsym $mod+parenright workspace $ws5
+#bindsym $mod+at workspace $ws6
+#bindsym $mod+plus workspace $ws7
+#bindsym $mod+minus workspace $ws8
+#bindsym $mod+slash workspace $ws9
+#bindsym $mod+asterisk workspace $ws10
+#bindsym $mod+equal workspace $ws11
+#bindsym $mod+percent workspace $ws12
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ws1

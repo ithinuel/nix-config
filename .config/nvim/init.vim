@@ -9,7 +9,7 @@ Plug 'lotabout/skim'
 Plug 'bogado/file-line'
 
 " coding tools
-Plug 'jiangmiao/auto-pairs'
+Plug 'LunarWatcher/auto-pairs', { 'tags': '*' }
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 
@@ -145,8 +145,8 @@ let g:airline_theme = 'archery'
 let g:airline_powerline_fonts = 1
 
 " auto-pair
-let g:AutoPairsMultilineClose = 0
-au FileType rust let b:AutoPairs = AutoPairsDefine({"r'" : "'", "b'" : "'"})
+au FileType rust    let b:AutoPairs = autopairs#AutoPairsDefine({"r'": "'", "b'": "'", '::\zs<': '>'})
+au FileType verilog let b:AutoPairs = autopairs#AutoPairsDefine({}, ["`"])
 
 " coc
 let g:coc_install_yarn_cmd = 'yarnpkg'
@@ -258,10 +258,10 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " buffer navigation
 map      <silent> <C-x>          <Plug>BufKillBangBd
 if s:uname != "Darwin\n"
-  nnoremap <silent> <C-A-Left>     :bp<CR>
-  nnoremap <silent> <C-A-Right>    :bn<CR>
-  inoremap <silent> <C-A-Left>     <Esc>:bp<CR>i
-  inoremap <silent> <C-A-Right>    <Esc>:bn<CR>i
+  nnoremap <silent> <C-S-Left>     :bp<CR>
+  nnoremap <silent> <C-S-Right>    :bn<CR>
+  inoremap <silent> <C-S-Left>     <Esc>:bp<CR>i
+  inoremap <silent> <C-S-Right>    <Esc>:bn<CR>i
 else
   nnoremap <silent> <D-S-Left>     :bp<CR>
   nnoremap <silent> <D-S-Right>    :bn<CR>

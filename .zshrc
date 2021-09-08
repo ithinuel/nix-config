@@ -56,7 +56,6 @@ alias bwd='pwd | sed -e "s:/:🥖:g"'
 # ===============================================
 # Setup env
 
-export LC_ALL="fr_FR.UTF-8"
 export SKIM_DEFAULT_COMMAND="rg --hidden --follow --no-ignore --color=never --files || find ."
 
 export NAVI_FINDER="skim"
