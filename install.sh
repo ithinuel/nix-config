@@ -6,6 +6,8 @@ ln -s $BASE/.zshrc $HOME/.zshrc
 # configure i3
 mkdir -p $HOME/.config/i3
 ln -s $BASE/.config/i3/* $HOME/.config/i3/
+mkdir -p $HOME/.config/i3status
+ln -s $BASE/.config/i3status/* $HOME/.config/i3status/
 
 # configure nvim
 mkdir -p $HOME/.config/nvim

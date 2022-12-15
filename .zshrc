@@ -23,6 +23,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle tonyseek/oh-my-zsh-virtualenv-prompt
+antigen bundle spwhitt/nix-zsh-completions.git
 
 antigen theme "af-magic"
 antigen apply

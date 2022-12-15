@@ -28,6 +28,8 @@ Plug 'mhinz/vim-signify'
 Plug 'plasticboy/vim-markdown'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarnpkg install' }
 
+" Haskell
+
 " Table and code alignment
 Plug 'godlygeek/tabular'
 "Plug 'junegunn/vim-easy-align'
@@ -37,6 +39,9 @@ Plug 'godlygeek/tabular'
 " Plug 'vim-scripts/Conque-GDB'
 " Plug 'phcerdan/Conque-GDB'
 " Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh \| UpdateRemotePlugins' }
+
+" Nix
+Plug 'LnL7/vim-nix'
 
 " UI
 Plug 'vim-airline/vim-airline'
@@ -57,6 +62,7 @@ set relativenumber
 set encoding=utf-8
 set nowrap
 set sidescroll=8
+set cursorline
 " set breakindent
 " set breakindentopt=sbr
 set showbreak=↪
@@ -244,16 +250,11 @@ command! -nargs=? Fold   :call CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR     :call CocAction('runCommand', 'editor.action.organizeImport')
 
-" confirm with enter & autoselect the first entry if none has been selected
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-"autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : coc#refresh()
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <silent><expr> <TAB> 
+    \ coc#pum#visible() ? coc#_select_confirm() :
+    \ <SID>check_back_space() ? "\<TAB>" :
+    \ coc#refresh()
+inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
 
 " buffer navigation
 map      <silent> <C-x>          <Plug>BufKillBangBd

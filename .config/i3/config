@@ -9,7 +9,7 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-set $mod Mod4
+set $mod Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -27,14 +27,14 @@ font pango:monospace 8
 # font, it doesn’t scale on retina/hidpi displays.
 
 # Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+floating_modifier Mod1
 
 # start a terminal
-bindsym XF86Mail exec i3-sensible-terminal 
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym XF86Mail exec i3-sensible-terminal
+bindsym Mod4+Return exec i3-sensible-terminal
 
 # kill focused window
-bindsym $mod+Shift+A kill
+bindsym $mod+Ctrl+A kill
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run
@@ -47,28 +47,16 @@ bindsym XF86Calculator exec gnome-calculator
 bindsym XF86HomePage exec firefox 
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+m focus right
-
-# alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+M move right
-
-# alternatively, you can use the cursor keys:
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+bindsym $mod+Ctrl+Left move left
+bindsym $mod+Ctrl+Down move down
+bindsym $mod+Ctrl+Up move up
+bindsym $mod+Ctrl+Right move right
 
 # split in horizontal orientation
 bindsym $mod+h split h
@@ -80,12 +68,12 @@ bindsym $mod+v split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+z layout tabbed
-bindsym $mod+e layout toggle split
+bindsym Mod4+z layout stacking
+bindsym Mod4+w layout tabbed
+bindsym Mod4+m layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Ctrl+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -112,54 +100,39 @@ set $ws11 "11"
 set $ws12 "12"
 
 # get keymap using: xmodmap -pke
-# switch to workspace with azerty
-bindsym $mod+ampersand workspace $ws1
-bindsym $mod+eacute workspace $ws2
-bindsym $mod+quotedbl workspace $ws3
-bindsym $mod+apostrophe workspace $ws4
-bindsym $mod+parenleft workspace $ws5
-bindsym $mod+minus workspace $ws6
-bindsym $mod+egrave workspace $ws7
-bindsym $mod+underscore workspace $ws8
-bindsym $mod+ccedilla workspace $ws9
-bindsym $mod+agrave workspace $ws10
-bindsym $mod+parenright workspace $ws11
-bindsym $mod+equal workspace $ws12
 
 # switch to workspace with bepo layout
-#bindsym $mod+quotedbl workspace $ws1
-#bindsym $mod+guillemotleft workspace $ws2
-#bindsym $mod+guillemotright workspace $ws3
-#bindsym $mod+parenleft workspace $ws4
-#bindsym $mod+parenright workspace $ws5
-#bindsym $mod+at workspace $ws6
-#bindsym $mod+plus workspace $ws7
-#bindsym $mod+minus workspace $ws8
-#bindsym $mod+slash workspace $ws9
-#bindsym $mod+asterisk workspace $ws10
-#bindsym $mod+equal workspace $ws11
-#bindsym $mod+percent workspace $ws12
+bindsym Mod4+quotedbl workspace $ws1
+bindsym Mod4+guillemotleft workspace $ws2
+bindsym Mod4+guillemotright workspace $ws3
+bindsym Mod4+parenleft workspace $ws4
+bindsym Mod4+parenright workspace $ws5
+bindsym Mod1+at workspace $ws6
+bindsym Mod1+plus workspace $ws7
+bindsym Mod1+minus workspace $ws8
+bindsym Mod1+slash workspace $ws9
+bindsym Mod1+asterisk workspace $ws10
+bindsym Mod1+z workspace $ws11
+bindsym Mod1+w workspace $ws12
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $ws1
-bindsym $mod+Shift+2 move container to workspace $ws2
-bindsym $mod+Shift+3 move container to workspace $ws3
-bindsym $mod+Shift+4 move container to workspace $ws4
-bindsym $mod+Shift+5 move container to workspace $ws5
-bindsym $mod+Shift+6 move container to workspace $ws6
-bindsym $mod+Shift+7 move container to workspace $ws7
-bindsym $mod+Shift+8 move container to workspace $ws8
-bindsym $mod+Shift+9 move container to workspace $ws9
-bindsym $mod+Shift+0 move container to workspace $ws10
-bindsym $mod+Shift+degree move container to workspace $ws11
-bindsym $mod+Shift+grave move container to workspace $ws12
+bindsym Mod4+Ctrl+1 move container to workspace $ws1
+bindsym Mod4+Ctrl+2 move container to workspace $ws2
+bindsym Mod4+Ctrl+3 move container to workspace $ws3
+bindsym Mod4+Ctrl+4 move container to workspace $ws4
+bindsym Mod4+Ctrl+5 move container to workspace $ws5
+bindsym Mod1+Ctrl+6 move container to workspace $ws6
+bindsym Mod1+Ctrl+7 move container to workspace $ws7
+bindsym Mod1+Ctrl+8 move container to workspace $ws8
+bindsym Mod1+Ctrl+9 move container to workspace $ws9
+bindsym Mod1+Ctrl+0 move container to workspace $ws10
+bindsym Mod1+Ctrl+z move container to workspace $ws11
+bindsym Mod1+Ctrl+w move container to workspace $ws12
 
-# reload the configuration file
-bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+r restart
+bindsym $mod+Ctrl+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Ctrl+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -188,8 +161,10 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-for_window [class="Gnome-calculator"] floating enable
+for_window [class="gnome-calculator"] floating enable
 for_window [class="CubicSDR" title="CubicSDR :: SDR Devices"] floating enable
+for_window [class="CubicSDR" title="CubicSDR :: SDR Devices"] floating enable
+for_window [title="keyfob reverse"] floating enable
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -197,9 +172,8 @@ bar {
         status_command i3status
 }
 
-exec --no-startup-id vmware-user
 exec --no-startup-id "compton -b"
-exec --no-startup-id "setxkbmap -option '' fr,fr -variant ,bepo -option grp:alt_shift_toggle"
+exec --no-startup-id "setxkbmap -option '' fr,fr -variant bepo, -option grp:alt_shift_toggle"
 exec --no-startup-id "udiskie --no-notify --tray"
 exec --no-startup-id nitrogen --restore
-exec --no-startup-id /usr/libexec/gsd-xsettings
+exec --no-startup-id bash ~/Documents/dotfiles/autostart.sh
