@@ -176,10 +176,10 @@ let mapleader = ","
 " bépo config
 let s:uname = system("uname -s")
 if s:uname != "Darwin\n"
-    noremap « <
-    noremap » >
-    noremap . :
-    noremap : .
+   noremap « <
+   noremap » >
+   noremap . :
+   noremap : .
 endif
 
 " coc

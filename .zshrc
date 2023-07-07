@@ -14,16 +14,17 @@ fi
 # Setup plugins
 antigen use oh-my-zsh
 
+antigen bundle zpm-zsh/vte
 antigen bundle git
 antigen bundle command-not-found
 antigen bundle dnf
 antigen bundle python
-antigen bundle zpm-zsh/autoenv
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle tonyseek/oh-my-zsh-virtualenv-prompt
 antigen bundle spwhitt/nix-zsh-completions.git
+antigen bundle zpm-zsh/autoenv
 
 antigen theme "af-magic"
 antigen apply

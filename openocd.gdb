@@ -5,17 +5,6 @@ set print asm-demangle on
 # set backtrace limit to not have infinite backtrace loops
 set backtrace limit 32
 
-# detect unhandled exceptions, hard faults and panics
-break DefaultHandler
-break HardFault
-# if rust break on unwind
-break rust_begin_unwind
-# if mbed break on mbed_error
-# break mbed_error
-
-# *try* to stop at the user entry point (it might be gone due to inlining)
-break main
-
 # # send captured ITM to the file itm.fifo
 # # (the microcontroller SWO pin must be connected to the programmer SWO pin)
 # # 8000000 must match the core clock frequency
@@ -54,5 +43,6 @@ end
 
 set architecture arm_any
 target extended-remote :3333
-monitor arm semihosting enable
+# monitor arm semihosting enable
 
+set mem inaccessible-by-default off
