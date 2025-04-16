@@ -1,0 +1,68 @@
+diff --git a/README.md b/README.md
+index 6208013..39a65f3 100644
+--- a/README.md
++++ b/README.md
+@@ -22,16 +22,6 @@ Then, install `@hexuhua/coc-copilot` using:
+ :CocInstall @hexuhua/coc-copilot
+ ```
+ 
+-## Usage
+-
+-Now coc-copilot doesn't support auto-updating completion panel. You need to update completions manually by `coc#refresh()`:
+-
+-```vim
+-inoremap <silent><expr><c-l> coc#refresh()
+-```
+-
+-That is because asynchronous completion makes coc completion panel update slowly. See: [Asynchronous Completion for isIncomplete Items in coc.nvim #5028](https://github.com/neoclide/coc.nvim/issues/5028)
+-
+ ## Configuration
+ 
+ Here are the available configuration options for coc-copilot:
+@@ -43,8 +33,8 @@ Here are the available configuration options for coc-copilot:
+ - `copilot.enablePreselect`: (Boolean, default: `true`) Enable or disable preselecting Copilot completion items.
+ - `copilot.kindLabel`: (String, default: `" "`) The label used for Copilot completions in the completion menu.
+ - `copilot.shortcut`: (String, default: `"Cop"`) The shortcut used for Copilot completions in the completion menu.
++- `copilot.autoUpdateCompletion`: (Boolean, default: `true`) Whether to update the completion panel automatically when the copilot result is updated.
+ - `copilot.showRemainingText`: (Boolean, default: `true`) Whether to show the remaining text after the completion item in the completion menu. For some languages such as markdown, there is often a lot of text in one line, which can be helpful.
+-- ~~`copilot.autoUpdateCompletion`: (Boolean, default: `true`) Whether to update the completion panel automatically when the copilot result is updated.~~ **Deprecated: Now coc-copilot no longer updates the completion panel automatically because asynchronous completion makes coc completion panel update slowly.** See: [Asynchronous Completion for isIncomplete Items in coc.nvim #5028](https://github.com/neoclide/coc.nvim/issues/5028)
+ 
+ ## License
+ 
+diff --git a/package.json b/package.json
+index 903ca6e..ac0f564 100644
+--- a/package.json
++++ b/package.json
+@@ -87,6 +87,11 @@
+           "default": "Cop",
+           "description": "Copilot shortcut"
+         },
++        "copilot.autoUpdateCompletion": {
++          "type": "boolean",
++          "default": true,
++          "description": "Whether to update the completion panel automatically when the copilot result is updated"
++        },
+         "copilot.timeout": {
+           "type": "integer",
+           "default": 5000,
+diff --git a/src/index.ts b/src/index.ts
+index 0f416d5..0348757 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -148,7 +148,7 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
+   const limit = configuration.get<number>('limit', 10)
+   const preselect = configuration.get<boolean>('enablePreselect', true)
+   const shortcut = configuration.get('shortcut', 'Cop')
+-  // const autoUpdateCompletion = configuration.get('autoUpdateCompletion', true)
++  const autoUpdateCompletion = configuration.get('autoUpdateCompletion', true)
+   // const triggerCharacters = configuration.get('triggerCharacters', [
+   //   '.',
+   //   '/',
+@@ -156,7 +156,6 @@ export const activate = async (context: ExtensionContext): Promise<void> => {
+   //   '*',
+   //   '<',
+   // ])
+-  const autoUpdateCompletion = false
+   const triggerCharacters = []
+   const timeout = configuration.get('timeout', 5000)
+   const showRemainingText = configuration.get<boolean>(
