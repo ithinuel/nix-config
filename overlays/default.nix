@@ -1,4 +1,4 @@
-inputs: self: super:
+inputs: final: super:
 let
   unstable = import inputs.nixpkgs_unstable { inherit (super) system; };
   # builds a vim plugin from a github repository at a given hash
@@ -23,13 +23,13 @@ super.lib.recursiveUpdate
     inherit (unstable.pkgs.vimPlugins) coc-nvim;
     coc-ruff = super.vimUtils.buildVimPlugin {
       pname = "coc-ruff";
-      inherit (self.coc-ruff) version meta;
-      src = "${self.coc-ruff}/lib/node_modules/@yaegassy/coc-ruff";
+      inherit (final.coc-ruff) version meta;
+      src = "${final.coc-ruff}/lib/node_modules/@yaegassy/coc-ruff";
     };
     coc-copilot = super.vimUtils.buildVimPlugin {
       pname = "coc-copilot";
-      inherit (self.coc-copilot) version meta;
-      src = "${self.coc-copilot}/lib/node_modules/@hexuhua/coc-copilot";
+      inherit (final.coc-copilot) version meta;
+      src = "${final.coc-copilot}/lib/node_modules/@hexuhua/coc-copilot";
     };
 
     vim-archery = vimPluginFromGitHub {

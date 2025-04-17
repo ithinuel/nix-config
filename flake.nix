@@ -21,8 +21,8 @@
 
   outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, pre-commit-hooks, sops-nix, ... }@inputs:
     let
-      overlays = [ (import ./overlays inputs) ];
-      mkPkgs = system: import nixpkgs { inherit system overlays; config.allowUnfree = true; };
+      overlays = import ./overlays inputs;
+      mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
       pathRoot = ./.;
       mkDarwinSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
@@ -63,6 +63,7 @@
     in
     (flake-utils.lib.eachDefaultSystem (system:
       let pkgs = mkPkgs system; in rec {
+        inherit overlays;
         formatter = pkgs.nixpkgs-fmt;
         checks = {
           pre-commit-check = pre-commit-hooks.lib.${system}.run {

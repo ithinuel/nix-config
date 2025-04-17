@@ -3,6 +3,6 @@
   nix.settings.warn-dirty = false;
   nix.optimise.automatic = true;
 
-  nixpkgs.overlays = overlays;
+  nixpkgs.overlays = [ overlays ];
   nixpkgs.config.allowUnfree = true;
 }
