@@ -22,7 +22,7 @@
 
   environment.shells = [ pkgs.zsh ];
 
-  sops.secrets.password = {
+  sops.secrets.password = lib.mkDefault {
     sopsFile = builtins.path { path = pathRoot + "/secrets/${username}@${hostname}.passwd"; name = "password"; };
     format = "binary";
     neededForUsers = true;
