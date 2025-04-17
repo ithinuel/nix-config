@@ -24,31 +24,40 @@
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
       pathRoot = ./.;
-      mkDarwinSystem = username: hostname: nix-darwin.lib.darwinSystem {
+      mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
           ./hosts
           ./hosts/darwin
-          ./hosts/darwin/${hostname}
         ];
 
         specialArgs = {
           inherit username hostname overlays pathRoot;
         };
       };
-
-      mkNixosSystem = username: hostname: nixpkgs.lib.nixosSystem {
+      mkDarwinSystem = username: hostname:
+        (mkDarwinBaseSystem username hostname).extendModules {
+          modules = [
+            ./hosts/darwin/${hostname}
+          ];
+        };
+      mkNixosBaseSystem = username: hostname: nixpkgs.lib.nixosSystem {
         modules = [
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
           ./hosts
           ./hosts/linux
-          ./hosts/linux/${hostname}
         ];
 
         specialArgs = {
           inherit username hostname overlays pathRoot;
         };
       };
+      mkNixosSystem = username: hostname:
+        (mkNixosBaseSystem username hostname).extendModules {
+          modules = [
+            ./hosts/linux/${hostname}
+          ];
+        };
 
       mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration {
         pkgs = mkPkgs system;
@@ -110,6 +119,7 @@
         };
       }))
     // {
+      lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig; };
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
 
