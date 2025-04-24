@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ lib, pathRoot, ... }: {
   imports = [ ./disk.nix ];
 
   virtualisation.virtualbox.guest.enable = true;
@@ -13,4 +13,6 @@
     emulatedSystems = [ "aarch64-linux" ];
     preferStaticEmulators = true;
   };
+
+  security.pki.certificateFiles = [ (pathRoot + "/certs/ithinuel.local.crt") ];
 }
