@@ -79,6 +79,13 @@
     variant = "bepo_afnor";
   };
 
+  # Enable local network discovery
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
   # Configure console keymap
   console.keyMap = "fr";
 
