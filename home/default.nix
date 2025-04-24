@@ -1,9 +1,9 @@
-{ config, pkgs, lib, username, ... }:
+{ config, pkgs, lib, username, pathRoot, ... }:
 let userBase = if pkgs.stdenv.isDarwin then "Users" else "home";
 in {
   sops.gnupg.home = "${config.home.homeDirectory}/.gnupg";
   sops.secrets.allowed_signers = {
-    sopsFile = ../secrets/allowed_signers;
+    sopsFile = pathRoot + "/secrets/allowed_signers";
     format = "binary";
   };
 
