@@ -179,7 +179,7 @@ in {
       vim-archery
     ];
 
-    extraConfig = builtins.readFile ./neovim.vim;
+    extraConfig = builtins.readFile ./home/neovim.vim;
   };
   home.file.".config/nvim/coc-settings.json".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/.config/home-manager/home/coc-settings.json";
