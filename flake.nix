@@ -8,18 +8,18 @@
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     disko.url = "github:nix-community/disko/master";
-    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     sops-nix.url = "github:mic92/sops-nix";
 
     # reduce duplication
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, pre-commit-hooks, sops-nix, ... }@inputs:
+  outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, ... }@inputs:
     let
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
@@ -75,7 +75,7 @@
         inherit overlays;
         formatter = pkgs.nixpkgs-fmt;
         checks = {
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+          pre-commit-check = git-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
               deadnix.enable = true;
