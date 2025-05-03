@@ -16,14 +16,11 @@ in {
   # environment.
   home.packages = with pkgs; [
     # terminal tools
-    zsh
-    htop
     docker
     docker-credential-helpers
     file
     graphviz
     unixtools.xxd
-    gh
     sops
     ssh-to-age
 
@@ -42,12 +39,8 @@ in {
 
     # Rust accelerated cli tools
     rustup
-    ripgrep
-    skim
-    bat
     bacon
     cargo-watch
-    ruff
 
     # Nix language server
     nixd
@@ -58,8 +51,6 @@ in {
     # custom packages
     awthemes
     nerdfonts
-    eza
-    fd-find
   ] ++
   lib.optionals pkgs.stdenv.isLinux [
     firefox
@@ -102,31 +93,11 @@ in {
 
       end
     '';
-
-
-    ".config/ripgreprc".text = ''
-      -p
-      --no-heading
-      --follow
-      --type-add=kconf:Kconfig
-      --type-add=dtss:*.dts
-      --type-add=dtsi:*.dtsi
-      --type-add=dts:include:dtss,dtsi
-      --type-add=ld:*.ld
-      --type-add=rustld:*.x
-      --type-add=linker:include:ld,rustld
-    '';
-
-    ".rgignore".text = ''
-      !.gitlab
-      !.github
-    '';
   };
 
   home.sessionVariables = {
     LESS = if pkgs.stdenv.isDarwin then "--mouse" else "";
     TCLLIBPATH = "${pkgs.awthemes}";
-    RIPGREP_CONFIG_PATH = "\${HOME}/.config/ripgreprc";
   };
 
   xdg.mimeApps = lib.attrsets.optionalAttrs (lib.strings.hasSuffix "-linux" pkgs.system) {
@@ -184,6 +155,8 @@ in {
       vim-airline
       vim-airline-themes
 
+      # coc is added manually here because we want to manually manage the settings file.
+      coc-nvim
       coc-clangd
       coc-cmake
       coc-docker
@@ -197,7 +170,6 @@ in {
       coc-spell-checker
       coc-toml
       coc-yaml
-      coc-nvim
 
       copilot-vim
       coc-copilot
@@ -211,6 +183,7 @@ in {
   };
   home.file.".config/nvim/coc-settings.json".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/.config/home-manager/home/coc-settings.json";
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -221,8 +194,9 @@ in {
     shellAliases = {
       gs = "git submodule";
       gk = "gitk --all --branches --word-diff";
-      gg = "git gui";
+      gg = "lazygit";
       gdto = "git difftool -y";
+      gsta = "git stash push --keep-index";
       gsti = "gst --ignored";
       gfa = "git fetch --all --recurse-submodules --prune";
       gbvv = "git branch -vv";
@@ -233,6 +207,7 @@ in {
       ls = "eza";
       lsa = "eza -lah --git";
       cat = "bat -p";
+      lg = "lazygit";
 
       hme = "home-manager edit";
       hms = "home-manager switch";
@@ -246,12 +221,17 @@ in {
       theme = "af-magic";
     };
   };
+
+  programs.bat.enable = true;
   programs.direnv = {
     enable = true;
     enableZshIntegration = true;
     nix-direnv.enable = true;
     silent = true;
   };
+  programs.eza.enable = true;
+  programs.fd.enable = true;
+  programs.gh.enable = true;
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -277,6 +257,30 @@ in {
     };
   };
   programs.gpg.enable = true;
+  programs.htop.enable = true;
+  #programs.lazydocker.enable = true; # TODO: enable once we move to 25.05
+  programs.lazygit.enable = true;
+  programs.ripgrep = {
+    enable = true;
+    arguments = [
+      "-p"
+      "--no-heading"
+      "--follow"
+      "--type-add=kconf:Kconfig"
+      "--type-add=dtss:*.dts"
+      "--type-add=dtsi:*.dtsi"
+      "--type-add=dts:include:dtss,dtsi"
+      "--type-add=ld:*.ld"
+      "--type-add=rustld:*.x"
+      "--type-add=linker:include:ld,rustld"
+    ];
+  };
+  home.file.".rgignore".text = ''
+    !.gitlab
+    !.github
+  '';
+  programs.ruff.enable = true;
+  programs.ruff.settings = { };
 
   services.home-manager.autoExpire.enable = pkgs.stdenv.isLinux;
 }
