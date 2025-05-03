@@ -63,7 +63,7 @@
         pkgs = mkPkgs system;
         modules = [
           sops-nix.homeManagerModules.sops
-          ./home
+          ./home.nix
         ];
         extraSpecialArgs = {
           inherit username pathRoot;
