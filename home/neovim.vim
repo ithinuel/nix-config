@@ -255,7 +255,8 @@ xnoremap p pgvy
 "     au BufReadPost * setlocal bufhidden=
 " aug END
 
-au BufNewFile,BufRead *.vh set syntax=verilog
+au BufNewFile,BufRead *.vh set filetype=verilog
+au BufNewFile,BufRead *.v set filetype=verilog
 
 au BufWritePre *.v,*.vh :%s/\s\+$//e
 
