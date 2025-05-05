@@ -240,7 +240,7 @@ in {
 
     userName = "Wilfried Chauveau";
     userEmail = let user = "wilfried.chauveau"; domain = "ithinuel.me"; in "${user}@${domain}";
-    ignores = [ ".direnv" ".DS_Store" ];
+    ignores = [ ".direnv" ".DS_Store" ".pre-commit-config.yaml" ];
     signing.signByDefault = true;
     signing.key = null;
 
