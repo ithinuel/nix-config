@@ -38,7 +38,6 @@ in {
     meld
 
     # Rust accelerated cli tools
-    rustup
     bacon
     cargo-watch
 
