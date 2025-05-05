@@ -120,6 +120,12 @@
       }))
     // {
       lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig; };
+      templates = {
+        simple = {
+          description = "Simple template with linting & formatting for nix’s file & a devShell";
+          path = ./templates/simple;
+        };
+      };
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
 
