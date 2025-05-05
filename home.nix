@@ -199,6 +199,7 @@ in {
       gsti = "gst --ignored";
       gfa = "git fetch --all --recurse-submodules --prune";
       gbvv = "git branch -vv";
+      gpristine = "git reset --hard && git clean --force -dfx -e .direnv -e .pre-commit-config.yaml";
 
       fd = "fd -H";
       ll = "eza -l --git";
