@@ -23,6 +23,7 @@ in {
     unixtools.xxd
     sops
     ssh-to-age
+    tree
 
     # extratools for coding
     pyright
