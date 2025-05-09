@@ -127,62 +127,7 @@ in {
 
   # Let home-manager manage itself
   programs.home-manager.enable = true;
-  programs.neovim = {
-    enable = true;
-    withNodeJs = true;
-    withPython3 = true;
-    defaultEditor = true;
-    vimAlias = true;
-
-    plugins = with pkgs.vimPlugins; [
-      vim-bufkill
-      vim-fugitive
-      vim-just
-      vim-markdown
-      vim-signify
-      nvim-surround
-      nvim-autopairs
-      which-key-nvim
-
-      ctrlp-vim
-      skim
-      fzf-vim
-      file-line
-      nerdcommenter
-      markdown-preview-nvim
-      tabular
-
-      vim-airline
-      vim-airline-themes
-
-      # coc is added manually here because we want to manually manage the settings file.
-      coc-nvim
-      coc-clangd
-      coc-cmake
-      coc-docker
-      coc-git
-      coc-json
-      coc-lua
-      coc-markdownlint
-      coc-pyright
-      coc-ruff
-      coc-rust-analyzer
-      coc-spell-checker
-      coc-toml
-      coc-yaml
-
-      copilot-vim
-      coc-copilot
-
-      #(vimPluginFromGitHub "LunarWatcher" "auto-pairs" "v4.0.2"
-      #  "sha256-dxWcbmXPeq87vnUgNFoXIqhIHMjmYoab2vhm1ijp9MM")
-      vim-archery
-    ];
-
-    extraConfig = builtins.readFile ./home/neovim.vim;
-  };
-  home.file.".config/nvim/coc-settings.json".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/.config/home-manager/home/coc-settings.json";
+  programs.nixvim = import ./nixvim.nix { inherit pkgs lib; };
 
   programs.zsh = {
     enable = true;
