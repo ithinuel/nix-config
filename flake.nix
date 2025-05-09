@@ -2,24 +2,28 @@
   description = "Flake configuration for my systems";
 
   inputs = {
+    disko.url = "github:nix-community/disko/master";
+    flake-utils.url = "github:numtide/flake-utils";
+    git-hooks.url = "github:cachix/git-hooks.nix";
+    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-24.11";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs_unstable.url = "github:NixOS/nixpkgs/b6f910a2f73fdbdcb71371dbbecd2c697a8e7c95";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-24.11";
-    flake-utils.url = "github:numtide/flake-utils";
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
-    disko.url = "github:nix-community/disko/master";
-    git-hooks.url = "github:cachix/git-hooks.nix";
+    nixvim.url = "github:nix-community/nixvim/nixos-24.11";
     sops-nix.url = "github:mic92/sops-nix";
 
     # reduce duplication
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nixvim.inputs.home-manager.follows = "home-manager";
+    nixvim.inputs.nix-darwin.follows = "nix-darwin";
+    nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, ... }@inputs:
+  outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, ... }@inputs:
     let
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
@@ -63,6 +67,7 @@
         pkgs = mkPkgs system;
         modules = [
           sops-nix.homeManagerModules.sops
+          nixvim.homeManagerModules.nixvim
           ./home.nix
         ];
         extraSpecialArgs = {
