@@ -16,6 +16,7 @@
       panel.enabled = false;
     };
     fugitive.enable = true;
+    lazygit.enable = true;
     lualine = {
       enable = true;
       settings.sections.lualine_x = [ "lsp_status" "filetype" ];
@@ -168,6 +169,9 @@
     # fzf mapping (search in files)
     { key = "<c-t>"; action = ":Rg<CR>"; }
     { mode = "i"; key = "<C-t>"; action = "<Esc>:Rg<CR>"; }
+
+    # Lazygit in vim 🫨
+    { mode = "n"; key = "<leader>gg"; action = ":LazyGit<CR>"; }
 
     # Buffer management
     { mode = "n"; key = "<C-S-Left>"; action = ":bp<CR>"; options = { desc = "Move to the previous buffer."; silent = true; }; }
