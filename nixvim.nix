@@ -17,6 +17,8 @@
     };
     fugitive.enable = true;
     lazygit.enable = true;
+    lspkind.enable = true;
+    lsp-format.enable = true;
     #lsp-status.enable = true; # TODO: needs an update in lualine for proper support. Hopefully in next release.
     lualine = {
       enable = true;
@@ -24,8 +26,6 @@
       # Could work with the following line but the render isn’t super nice.
       #settings.sections.lualine_x = [ "require('lsp-status').status()" "filetype" ];
     };
-    lspkind.enable = true;
-    lsp-format.enable = true;
     markdown-preview = {
       enable = true;
       settings.auto_close = 0;
@@ -48,13 +48,13 @@
         clangd.enable = true;
         cmake.enable = true;
         dockerls.enable = true;
-        #gitlab_ci_ls.enable = true;
+        #gitlab_ci_ls.enable = true; # TODO: Enable when available
         jsonls.enable = true;
-        #just.enable = true;
+        #just.enable = true; # TODO: Enable when available
         lua_ls.enable = true;
         pyright.enable = true;
         ruff.enable = true;
-        # the default config doesn’t work great quite yet
+        # TODO: the default config doesn’t work great quite yet
         # see https://github.com/nix-community/nixvim/issues/3296
         #statix.enable = true;
         yamlls.enable = true;
