@@ -17,13 +17,15 @@
     };
     fugitive.enable = true;
     lazygit.enable = true;
+    #lsp-status.enable = true; # TODO: needs an update in lualine for proper support. Hopefully in next release.
     lualine = {
       enable = true;
-      settings.sections.lualine_x = [ "lsp_status" "filetype" ];
+      #settings.sections.lualine_x = [ "lsp_status" "filetype" ];
+      # Could work with the following line but the render isn’t super nice.
+      #settings.sections.lualine_x = [ "require('lsp-status').status()" "filetype" ];
     };
     lspkind.enable = true;
     lsp-format.enable = true;
-    lsp-status.enable = true;
     markdown-preview = {
       enable = true;
       settings.auto_close = 0;
