@@ -50,7 +50,6 @@ in {
 
     # custom packages
     awthemes
-    nerdfonts
   ] ++
   lib.optionals pkgs.stdenv.isLinux [
     firefox
@@ -204,7 +203,7 @@ in {
   };
   programs.gpg.enable = true;
   programs.htop.enable = true;
-  #programs.lazydocker.enable = true; # TODO: enable once we move to 25.05
+  programs.lazydocker.enable = true;
   programs.lazygit.enable = true;
   programs.ripgrep = {
     enable = true;

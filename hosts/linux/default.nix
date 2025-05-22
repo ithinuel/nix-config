@@ -38,6 +38,8 @@
     packages = [ pkgs.home-manager ];
   };
 
+  fonts.packages = builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
   programs.gnupg.agent.enable = true;
   programs.zsh.enable = true;
   programs.dconf = {
