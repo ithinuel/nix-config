@@ -5,11 +5,10 @@
     disko.url = "github:nix-community/disko/master";
     flake-utils.url = "github:numtide/flake-utils";
     git-hooks.url = "github:cachix/git-hooks.nix";
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-24.11";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    nixpkgs_unstable.url = "github:NixOS/nixpkgs/b6f910a2f73fdbdcb71371dbbecd2c697a8e7c95";
-    nixvim.url = "github:nix-community/nixvim/nixos-24.11";
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixvim.url = "github:nix-community/nixvim/nixos-25.05";
     sops-nix.url = "github:mic92/sops-nix";
 
     # reduce duplication
@@ -17,8 +16,6 @@
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    nixvim.inputs.home-manager.follows = "home-manager";
-    nixvim.inputs.nix-darwin.follows = "nix-darwin";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };

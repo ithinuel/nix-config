@@ -11,7 +11,7 @@
 
   plugins = {
     bufferline.enable = true;
-    copilot-lua = {
+    copilot-lua.settings = {
       suggestion.enabled = false;
       panel.enabled = false;
     };
@@ -19,10 +19,11 @@
     lazygit.enable = true;
     lspkind.enable = true;
     lsp-format.enable = true;
-    #lsp-status.enable = true; # TODO: needs an update in lualine for proper support. Hopefully in next release.
+    lsp-status.enable = true;
+    lsp.enable = true;
     lualine = {
       enable = true;
-      #settings.sections.lualine_x = [ "lsp_status" "filetype" ];
+      settings.sections.lualine_x = [ "lsp_status" "filetype" ];
       # Could work with the following line but the render isn’t super nice.
       #settings.sections.lualine_x = [ "require('lsp-status').status()" "filetype" ];
     };
@@ -38,38 +39,6 @@
       settings.preset = "modern";
     };
 
-    lsp = {
-      enable = true;
-      inlayHints = true;
-      servers = {
-        asm_lsp.enable = true;
-        bashls.enable = true;
-        bitbake_language_server.enable = pkgs.stdenv.isLinux;
-        clangd.enable = true;
-        cmake.enable = true;
-        dockerls.enable = true;
-        #gitlab_ci_ls.enable = true; # TODO: Enable when available
-        jsonls.enable = true;
-        #just.enable = true; # TODO: Enable when available
-        lua_ls.enable = true;
-        pyright.enable = true;
-        ruff.enable = true;
-        # TODO: the default config doesn’t work great quite yet
-        # see https://github.com/nix-community/nixvim/issues/3296
-        #statix.enable = true;
-        yamlls.enable = true;
-
-        rust_analyzer = {
-          enable = true;
-          installCargo = false;
-          installRustc = false;
-        };
-        nixd = {
-          enable = true;
-          settings.formatting.command = [ "nixpkgs-fmt" ];
-        };
-      };
-    };
     cmp = {
       enable = true;
       settings = {
@@ -84,13 +53,43 @@
           "nvim_lsp"
           "cmp-clippy"
           "conventionalcommits"
-          "copilot"
+          #"copilot"
           "emoji"
           "git"
           "path"
           "spell"
           "buffer"
         ];
+      };
+    };
+  };
+
+  lsp = {
+    inlayHints.enable = true;
+    servers = {
+      asm_lsp.enable = true;
+      bashls.enable = true;
+      bitbake_language_server.enable = pkgs.stdenv.isLinux;
+      clangd.enable = true;
+      cmake.enable = true;
+      dockerls.enable = true;
+      #gitlab_ci_ls.enable = true; # TODO: Enable when available
+      jsonls.enable = true;
+      just.enable = true;
+      lua_ls.enable = true;
+      pyright.enable = true;
+      ruff.enable = true;
+      # TODO: the default config doesn’t work great quite yet
+      # see https://github.com/nix-community/nixvim/issues/3296
+      #statix.enable = true;
+      yamlls.enable = true;
+
+      rust_analyzer = {
+        enable = true;
+      };
+      nixd = {
+        enable = true;
+        settings.formatting.command = [ "nixpkgs-fmt" ];
       };
     };
   };
