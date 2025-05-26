@@ -1,4 +1,4 @@
 {
-  nixpkgs.hostPlatform = "aarch64-darwin";
   networking.hostName = "ithinuel-air";
+  ids.gids.nixbld = 30000;
 }

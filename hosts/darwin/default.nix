@@ -1,6 +1,5 @@
 { pkgs, username, ... }: {
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
   # Creates global /etc/zshrc that loads the nix-darwin environment
   programs.zsh.enable = true; # Important!
@@ -9,11 +8,11 @@
   environment.systemPackages = [ ];
 
   # Add ability to used TouchID for sudo authentication
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
-  system.stateVersion = 5;
+  system.stateVersion = 6;
 
   users.users.${username}.packages = [
     pkgs.colima
