@@ -27,6 +27,7 @@
       pathRoot = ./.;
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
+          sops-nix.darwinModules.sops
           ./hosts
           ./hosts/darwin
         ];
