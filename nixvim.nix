@@ -155,7 +155,7 @@
         ++ [ "*~" "*.swp" "*.tmp" ];
 
       list = true;
-      listchars = "tab:»\\ ,trail:·,nbsp:⎵,precedes:<,extends:>";
+      listchars = "tab:»\ ,trail:·,nbsp:⎵,precedes:<,extends:>";
     };
 
   globals.mapleader = ",";
