@@ -24,6 +24,7 @@ in {
     sops
     ssh-to-age
     tree
+    dust
 
     # extratools for coding
     pyright
@@ -153,6 +154,7 @@ in {
       lsa = "eza -lah --git";
       cat = "bat -p";
       lg = "lazygit";
+      du = "dust --reverse";
 
       hme = "home-manager edit";
       hms = "home-manager switch";
