@@ -3,13 +3,13 @@
 
   inputs = {
     disko.url = "github:nix-community/disko/master";
-    flake-utils.url = "github:numtide/flake-utils";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixvim.url = "github:nix-community/nixvim/nixos-25.05";
     sops-nix.url = "github:mic92/sops-nix";
+    utils.url = "github:numtide/flake-utils";
 
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +20,7 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, flake-utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, ... }@inputs:
+  outputs = { self, utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, ... }@inputs:
     let
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
@@ -73,7 +73,7 @@
         };
       };
     in
-    (flake-utils.lib.eachDefaultSystem (system:
+    (utils.lib.eachDefaultSystem (system:
       let pkgs = mkPkgs system; in rec {
         inherit overlays;
         formatter = pkgs.nixpkgs-fmt;
