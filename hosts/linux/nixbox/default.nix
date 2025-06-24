@@ -1,5 +1,8 @@
 { lib, pathRoot, ... }: {
-  imports = [ ./disk.nix ];
+  imports = [
+    ./disk.nix
+    (pathRoot + "/hosts/linux/desktop.nix")
+  ];
 
   virtualisation.virtualbox.guest.enable = true;
 
