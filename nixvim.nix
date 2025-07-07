@@ -64,6 +64,11 @@
     };
   };
 
+  diagnostic.settings = {
+    virtual_text = false;
+    virtual_lines = true;
+  };
+
   lsp = {
     inlayHints.enable = true;
     servers = {
