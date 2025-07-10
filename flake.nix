@@ -25,6 +25,7 @@
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
       pathRoot = ./.;
+      nixosModules.desktop = ./modules/desktop.nix;
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
           sops-nix.darwinModules.sops
@@ -46,6 +47,7 @@
         modules = [
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
+          nixosModules.desktop
           ./hosts
           ./hosts/linux
         ];
@@ -119,9 +121,11 @@
         apps.default = {
           type = "app";
           program = "${packages.install-from-live}/bin/install-from-live";
+          inherit (packages.install-from-live) meta;
         };
       }))
     // {
+      inherit nixosModules;
       lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig; };
       templates = {
         simple = {
@@ -129,6 +133,7 @@
           path = ./templates/simple;
         };
       };
+
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
 

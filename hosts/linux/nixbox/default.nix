@@ -1,7 +1,6 @@
 { lib, pathRoot, ... }: {
   imports = [
     ./disk.nix
-    (pathRoot + "/hosts/linux/desktop.nix")
   ];
 
   virtualisation.virtualbox.guest.enable = true;
@@ -18,4 +17,5 @@
   };
 
   security.pki.certificateFiles = [ (pathRoot + "/certs/ithinuel.local.crt") ];
+  desktop.enable = true;
 }
