@@ -1,15 +1,17 @@
 keys:
   - &at_ithinuel F1DA07835BA76FA450BBCA2B0BC4C0B2B0879D6A
   - &at_work 9F2D999DD7C7CCCFA7A5B357FD66024FC8A1D433
+  - &nixbox_user age1gdrs6an66v3k3k0rf76wl5h46nym7yrra2nuryaajuct6c76tytq6ggxhz
   - &nixbox age1wg2jjmjq55xnnguxrzu0saf33jrxaaq9rcgtt4mllqa34ul7ncss68ted6
 creation_rules:
-  - path_regex: 'secrets/ithinuel@nixbox\.passwd'
+  - path_regex: secrets/nixbox\.ithinuel\.(pass|age)\.sops
     pgp: *at_ithinuel
     age: *nixbox
-  - path_regex: 'secrets/.*$'
+  - path_regex: secrets/allowed_signers.sops
+    pgp: *at_ithinuel
+    age: *nixbox_user
+  - path_regex: secrets/.*$
     key_groups:
     - pgp:
       - *at_ithinuel
       - *at_work
-      age:
-      - *nixbox

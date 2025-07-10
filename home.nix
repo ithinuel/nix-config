@@ -1,16 +1,19 @@
 { config, pkgs, lib, username, pathRoot, ... }:
-let userBase = if pkgs.stdenv.isDarwin then "Users" else "home";
-in {
-  sops.gnupg.home = "${config.home.homeDirectory}/.gnupg";
+let
+  userBase = if pkgs.stdenv.isDarwin then "Users" else "home";
+  homeDirectory = "/${userBase}/${username}";
+in
+{
+  sops.age.keyFile = homeDirectory + "/.sops/age/keys.txt";
   sops.secrets.allowed_signers = {
-    sopsFile = pathRoot + "/secrets/allowed_signers";
+    sopsFile = pathRoot + "/secrets/allowed_signers.sops";
     format = "binary";
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "24.11";
   home.username = username;
-  home.homeDirectory = "/${userBase}/${username}";
+  home.homeDirectory = homeDirectory;
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -22,6 +25,7 @@ in {
     graphviz
     unixtools.xxd
     sops
+    age
     ssh-to-age
     tree
     dust

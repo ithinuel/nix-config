@@ -16,9 +16,16 @@
   networking.hostName = lib.mkDefault hostname;
 
   sops.secrets.password = lib.mkDefault {
-    sopsFile = builtins.path { path = pathRoot + "/secrets/${username}@${hostname}.passwd"; name = "password"; };
+    sopsFile = pathRoot + "/secrets/${hostname}.${username}.pass.sops";
     format = "binary";
     neededForUsers = true;
+  };
+  sops.secrets.age-key = lib.mkDefault {
+    sopsFile = pathRoot + "/secrets/${hostname}.${username}.age.sops";
+    format = "binary";
+    owner = username;
+    mode = "0600";
+    path = "/home/${username}/.sops/age/keys.txt";
   };
 
   users.defaultUserShell = pkgs.zsh;
