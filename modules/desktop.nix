@@ -1,4 +1,6 @@
 { config, lib, pkgs, username, ... }: {
+  imports = [ ./dconf.nix ];
+
   options.desktop.enable = lib.mkEnableOption "desktop";
   config = lib.mkIf config.desktop.enable {
     # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -41,11 +43,5 @@
     # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
     systemd.services."getty@tty1".enable = false;
     systemd.services."autovt@tty1".enable = false;
-
-    programs.dconf = {
-      enable = pkgs.stdenv.isLinux;
-      # A "user" profile with a database
-      profiles.user.databases = import ./dconf.nix { inherit lib; };
-    };
   };
 }
