@@ -31,6 +31,10 @@
       enable = true;
       settings.auto_close = 0;
     };
+    none-ls = {
+      enable = true;
+      sources.diagnostics.statix.enable = true;
+    };
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
     statuscol = {
@@ -93,9 +97,6 @@
       lua_ls.enable = true;
       pyright.enable = true;
       ruff.enable = true;
-      # TODO: the default config doesn’t work great quite yet
-      # see https://github.com/nix-community/nixvim/issues/3296
-      #statix.enable = true;
       yamlls.enable = true;
 
       rust_analyzer = {
