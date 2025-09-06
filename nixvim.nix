@@ -15,7 +15,7 @@
       suggestion.enabled = false;
       panel.enabled = false;
     };
-    fugitive.enable = true;
+    gitsigns.enable = true;
     lazygit.enable = true;
     lspkind.enable = true;
     lsp-format.enable = true;
@@ -33,6 +33,15 @@
     };
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
+    statuscol = {
+      enable = true;
+      settings.segments = [
+        { text = [ "%=%{v:lnum} " ]; } # line number
+        { text = [ "%C" ]; click = "v:lua.ScFa"; } # fold
+        { text = [ "%s" ]; } # signs
+      ];
+    };
+    treesitter.enable = true;
     web-devicons.enable = true;
     which-key = {
       enable = true;
@@ -137,12 +146,16 @@
       expandtab = true;
       smartindent = true;
 
-      foldmethod = "syntax";
+      foldmethod = "expr";
+      foldexpr = "v:lua.vim.treesitter.foldexpr()";
       foldcolumn = "1";
       foldlevel = 99;
+      foldlevelstart = 99;
+      foldenable = true;
 
       ruler = true;
       number = true;
+      signcolumn = "yes";
 
       smartcase = true;
       incsearch = true;
