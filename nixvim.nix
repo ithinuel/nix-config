@@ -87,7 +87,7 @@
       clangd.enable = true;
       cmake.enable = true;
       dockerls.enable = true;
-      #gitlab_ci_ls.enable = true; # TODO: Enable when available
+      gitlab_ci_ls.enable = true;
       jsonls.enable = true;
       just.enable = true;
       lua_ls.enable = true;
