@@ -128,56 +128,54 @@
     tabular
   ];
 
-  opts =
-    let colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
-    in {
-      termguicolors = true;
+  opts = {
+    termguicolors = true;
 
-      hidden = true;
-      encoding = "utf-8";
-      cursorline = true;
+    hidden = true;
+    encoding = "utf-8";
+    cursorline = true;
 
-      inherit colorcolumn;
-      wrap = false;
-      sidescroll = 8;
-      showbreak = "↪";
+    colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
+    wrap = false;
+    sidescroll = 8;
+    showbreak = "↪";
 
-      viewoptions = [ "folds" "cursor" ];
+    viewoptions = [ "folds" "cursor" ];
 
-      tabstop = 4;
-      shiftwidth = 4;
-      expandtab = true;
-      smartindent = true;
+    tabstop = 4;
+    shiftwidth = 4;
+    expandtab = true;
+    smartindent = true;
 
-      foldmethod = "expr";
-      foldexpr = "v:lua.vim.treesitter.foldexpr()";
-      foldcolumn = "1";
-      foldlevel = 99;
-      foldlevelstart = 99;
-      foldenable = true;
+    foldmethod = "expr";
+    foldexpr = "v:lua.vim.treesitter.foldexpr()";
+    foldcolumn = "1";
+    foldlevel = 99;
+    foldlevelstart = 99;
+    foldenable = true;
 
-      ruler = true;
-      number = true;
-      signcolumn = "yes";
+    ruler = true;
+    number = true;
+    signcolumn = "yes";
 
-      smartcase = true;
-      incsearch = true;
-      hlsearch = true;
+    smartcase = true;
+    incsearch = true;
+    hlsearch = true;
 
-      mouse = "a";
-      # enable pre-project vimrc
-      exrc = true;
+    mouse = "a";
+    # enable pre-project vimrc
+    exrc = true;
 
-      wildmenu = true;
-      wildmode = "full";
-      wildignore = [ "*.a" "*.o" ]
-        ++ [ "*.bmp" "*.gif" "*.ico" "*.jpg" "*.png" ]
-        ++ [ ".DS_Store" ".git" ".hg" ".svn" ]
-        ++ [ "*~" "*.swp" "*.tmp" ];
+    wildmenu = true;
+    wildmode = "full";
+    wildignore = [ "*.a" "*.o" ]
+      ++ [ "*.bmp" "*.gif" "*.ico" "*.jpg" "*.png" ]
+      ++ [ ".DS_Store" ".git" ".hg" ".svn" ]
+      ++ [ "*~" "*.swp" "*.tmp" ];
 
-      list = true;
-      listchars = "tab:»\ ,trail:·,nbsp:⎵,precedes:<,extends:>";
-    };
+    list = true;
+    listchars = "tab:»\ ,trail:·,nbsp:⎵,precedes:<,extends:>";
+  };
 
   globals.mapleader = ",";
   keymaps = [
