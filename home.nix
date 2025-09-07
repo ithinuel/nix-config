@@ -210,7 +210,10 @@ in
   programs.gpg.enable = true;
   programs.htop.enable = true;
   programs.lazydocker.enable = true;
-  programs.lazygit.enable = true;
+  programs.lazygit = {
+    enable = true;
+    settings.git.overrideGpg = true;
+  };
   programs.ripgrep = {
     enable = true;
     arguments = [
