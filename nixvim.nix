@@ -1,14 +1,73 @@
 { pkgs, lib }: {
   enable = true;
+  vimAlias = true;
   defaultEditor = true;
 
-
-  vimAlias = true;
   colorschemes.nightfox = {
     enable = true;
     flavor = "duskfox";
   };
   highlightOverride.Whitespace.link = "LineNr";
+
+  opts = {
+    termguicolors = true;
+
+    hidden = true;
+    encoding = "utf-8";
+    cursorline = true;
+    guicursor = let blink-pattern = "blinkwait1-blinkoff500-blinkon500"; in [
+      "n-v-c:block-${blink-pattern}"
+      "i-ci:ver25-${blink-pattern}"
+      "r-cr:hor20-${blink-pattern}"
+    ];
+
+    colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
+    wrap = false;
+    sidescroll = 8;
+    showbreak = "↪";
+
+    viewoptions = [ "folds" "cursor" ];
+
+    tabstop = 4;
+    shiftwidth = 4;
+    expandtab = true;
+    smartindent = true;
+
+    foldmethod = "expr";
+    foldexpr = "v:lua.vim.treesitter.foldexpr()";
+    foldcolumn = "1";
+    foldlevel = 99;
+    foldlevelstart = 99;
+    foldenable = true;
+
+    ruler = true;
+    number = true;
+    signcolumn = "yes";
+
+    smartcase = true;
+    incsearch = true;
+    hlsearch = true;
+
+    mouse = "a";
+    # enable pre-project vimrc
+    exrc = true;
+
+    wildmenu = true;
+    wildmode = "full";
+    wildignore = [ "*.a" "*.o" ]
+      ++ [ "*.bmp" "*.gif" "*.ico" "*.jpg" "*.png" ]
+      ++ [ ".DS_Store" ".git" ".hg" ".svn" ]
+      ++ [ "*~" "*.swp" "*.tmp" ];
+
+    list = true;
+    listchars = {
+      tab = "» ";
+      trail = "·";
+      nbsp = "⎵";
+      precedes = "<";
+      extends = ">";
+    };
+  };
 
   plugins = {
     bufferline.enable = true;
@@ -88,11 +147,6 @@
     };
   };
 
-  diagnostic.settings = {
-    virtual_text = false;
-    virtual_lines = true;
-  };
-
   lsp = {
     inlayHints.enable = true;
     servers = {
@@ -120,6 +174,13 @@
     };
   };
 
+  diagnostic.settings = {
+    # disables diagnostics at the end of the lines.
+    virtual_text = false;
+    # enables diagnostics between lines.
+    virtual_lines = true;
+  };
+
   extraPlugins = with pkgs.vimPlugins; [
     vim-bufkill
     vim-just
@@ -128,60 +189,6 @@
     nerdcommenter
     tabular
   ];
-
-  opts = {
-    termguicolors = true;
-
-    hidden = true;
-    encoding = "utf-8";
-    cursorline = true;
-    guicursor = let blink-pattern = "blinkwait1-blinkoff500-blinkon500"; in [
-      "n-v-c:block-${blink-pattern}"
-      "i-ci:ver25-${blink-pattern}"
-      "r-cr:hor20-${blink-pattern}"
-    ];
-
-    colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
-    wrap = false;
-    sidescroll = 8;
-    showbreak = "↪";
-
-    viewoptions = [ "folds" "cursor" ];
-
-    tabstop = 4;
-    shiftwidth = 4;
-    expandtab = true;
-    smartindent = true;
-
-    foldmethod = "expr";
-    foldexpr = "v:lua.vim.treesitter.foldexpr()";
-    foldcolumn = "1";
-    foldlevel = 99;
-    foldlevelstart = 99;
-    foldenable = true;
-
-    ruler = true;
-    number = true;
-    signcolumn = "yes";
-
-    smartcase = true;
-    incsearch = true;
-    hlsearch = true;
-
-    mouse = "a";
-    # enable pre-project vimrc
-    exrc = true;
-
-    wildmenu = true;
-    wildmode = "full";
-    wildignore = [ "*.a" "*.o" ]
-      ++ [ "*.bmp" "*.gif" "*.ico" "*.jpg" "*.png" ]
-      ++ [ ".DS_Store" ".git" ".hg" ".svn" ]
-      ++ [ "*~" "*.swp" "*.tmp" ];
-
-    list = true;
-    listchars = "tab:»\ ,trail:·,nbsp:⎵,precedes:<,extends:>";
-  };
 
   globals.mapleader = ",";
   keymaps = [
