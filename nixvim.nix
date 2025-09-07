@@ -8,6 +8,7 @@
     enable = true;
     flavor = "duskfox";
   };
+  highlightOverride.Whitespace.link = "LineNr";
 
   plugins = {
     bufferline.enable = true;
