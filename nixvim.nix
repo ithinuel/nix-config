@@ -134,6 +134,11 @@
     hidden = true;
     encoding = "utf-8";
     cursorline = true;
+    guicursor = let blink-pattern = "blinkwait1-blinkoff500-blinkon500"; in [
+      "n-v-c:block-${blink-pattern}"
+      "i-ci:ver25-${blink-pattern}"
+      "r-cr:hor20-${blink-pattern}"
+    ];
 
     colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
     wrap = false;
