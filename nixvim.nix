@@ -15,6 +15,16 @@
       suggestion.enabled = false;
       panel.enabled = false;
     };
+    fzf-lua = {
+      enable = true;
+      keymaps = {
+        "<c-t>" = "treesitter";
+        "<c-o>" = "files";
+        "<c-p>" = "buffers";
+        "<c-r>" = "live_grep_resume";
+      };
+      settings.actions.files.__raw = ''{ ["enter"] = require("fzf-lua").actions.file_edit }'';
+    };
     gitsigns.enable = true;
     lazygit.enable = true;
     lspkind.enable = true;
@@ -113,18 +123,10 @@
     vim-bufkill
     vim-just
 
-    ctrlp-vim
     file-line
-    fzf-vim
     nerdcommenter
-    skim
     tabular
   ];
-  globals = {
-    "ctrlp_types" = [ "buf" "mru" "fil" ];
-    "ctrlp_open_multiple_files" = "i";
-    "ctrlp_clear_cache_on_exit" = 0;
-  };
 
   opts =
     let colorcolumn = "100," + (lib.concatStringsSep "," (lib.map builtins.toString (lib.range 120 499)));
@@ -183,12 +185,6 @@
     { mode = "x"; key = "p"; action = "pgvy"; options.desc = "re-yank what was pasted."; }
 
     # skim mapping (search in file names)
-    { key = "<c-o>"; action = ":SK<CR>"; }
-    { mode = "i"; key = "<C-o>"; action = "<Esc>:SK<CR>"; }
-
-    # fzf mapping (search in files)
-    { key = "<c-t>"; action = ":Rg<CR>"; }
-    { mode = "i"; key = "<C-t>"; action = "<Esc>:Rg<CR>"; }
 
     # Lazygit in vim 🫨
     { mode = "n"; key = "<leader>gg"; action = ":LazyGit<CR>"; }
