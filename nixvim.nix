@@ -98,8 +98,6 @@
     lualine = {
       enable = true;
       settings.sections.lualine_x = [ "lsp_status" "filetype" ];
-      # Could work with the following line but the render isn’t super nice.
-      #settings.sections.lualine_x = [ "require('lsp-status').status()" "filetype" ];
     };
     markdown-preview = {
       enable = true;
@@ -166,15 +164,9 @@
       lua_ls.enable = true;
       pyright.enable = true;
       ruff.enable = true;
+      rust_analyzer.enable = true;
       yamlls.enable = true;
-
-      rust_analyzer = {
-        enable = true;
-      };
-      nixd = {
-        enable = true;
-        settings.formatting.command = [ "nixpkgs-fmt" ];
-      };
+      nixd.enable = true;
     };
   };
 
