@@ -210,12 +210,13 @@
     { key = "gd"; action = ":lua vim.lsp.buf.definition()<CR>"; options = { desc = "go to definition with LSP"; silent = true; }; }
     { key = "<leader>rn"; action = ":lua vim.lsp.buf.rename()<CR>"; options.desc = "rename variable with LSP"; }
     { key = "<leader>ac"; action = ":lua vim.lsp.buf.code_action()<CR>"; options = { desc = "Triggers the code action menu."; silent = true; }; }
+
+    { key = "."; action = ":"; }
+    { key = ":"; action = "."; }
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     # bépo remapped
     { key = "«"; action = "<"; }
     { key = "»"; action = ">"; }
-    { key = "."; action = ":"; }
-    { key = ":"; action = "."; }
   ];
   autoCmd = [
     # force filetype to be matched correctly
