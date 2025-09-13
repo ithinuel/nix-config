@@ -85,6 +85,8 @@
         "<c-p>" = "buffers";
         "<c-r>" = "live_grep_resume";
       };
+      # Change the default behaviour on multiple selectinos from opening a buffer list to opening
+      # the files directly.
       settings.actions.files.__raw = ''{ ["enter"] = require("fzf-lua").actions.file_edit }'';
     };
     gitsigns.enable = true;
@@ -194,10 +196,12 @@
 
   globals.mapleader = ",";
   keymaps = [
-    { mode = "n"; key = "gp"; action = "<C-O>"; options.desc = "Goto the previous cursor positions."; }
+    # improve the paste command 
     { mode = "x"; key = "p"; action = "pgvy"; options.desc = "re-yank what was pasted."; }
 
-    # skim mapping (search in file names)
+    # resolve conflicts with fzf-lua
+    { mode = "n"; key = "<s-U>"; action = "<C-R>"; options.desc = "Redo an undo 😮"; }
+    { mode = "n"; key = "gp"; action = "<C-O>"; options.desc = "Goto the previous cursor positions."; }
 
     # Lazygit in vim 🫨
     { mode = "n"; key = "<leader>gg"; action = ":LazyGit<CR>"; }
