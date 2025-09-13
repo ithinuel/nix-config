@@ -117,12 +117,6 @@
           inherit (checks.pre-commit-check) shellHook;
           buildInputs = checks.pre-commit-check.enabledPackages;
         };
-
-        apps.default = {
-          type = "app";
-          program = "${packages.install-from-live}/bin/install-from-live";
-          inherit (packages.install-from-live) meta;
-        };
       }))
     // {
       inherit nixosModules;
