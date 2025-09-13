@@ -74,6 +74,9 @@
   plugins = {
     bufferline.enable = true;
     copilot-lua.enable = true;
+    dap.enable = true;
+    dap-ui.enable = true;
+    dap-virtual-text.enable = true;
     fzf-lua = {
       enable = true;
       keymaps = {
