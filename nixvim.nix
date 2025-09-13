@@ -3,6 +3,8 @@
   vimAlias = true;
   defaultEditor = true;
 
+  nixpkgs.pkgs = pkgs;
+
   colorschemes.nightfox = {
     enable = true;
     flavor = "duskfox";
