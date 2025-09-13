@@ -73,10 +73,7 @@
 
   plugins = {
     bufferline.enable = true;
-    copilot-lua.settings = {
-      suggestion.enabled = false;
-      panel.enabled = false;
-    };
+    copilot-lua.enable = true;
     fzf-lua = {
       enable = true;
       keymaps = {
@@ -138,7 +135,7 @@
           "nvim_lsp"
           "cmp-clippy"
           "conventionalcommits"
-          #"copilot"
+          "copilot"
           "emoji"
           "git"
           "path"
