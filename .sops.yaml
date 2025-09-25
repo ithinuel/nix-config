@@ -7,6 +7,9 @@ creation_rules:
   - path_regex: secrets/nixbox\.ithinuel\.(pass|age)\.sops
     pgp: *at_ithinuel
     age: *nixbox
+  - path_regex: secrets/nixbox\..*\.sops
+    pgp: *at_ithinuel
+    age: *nixbox
   - path_regex: secrets/allowed_signers.sops
     pgp: *at_ithinuel
     age: *nixbox_user
