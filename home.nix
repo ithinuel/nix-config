@@ -66,13 +66,13 @@ in
     libreoffice
     ghex
   ] ++
-  lib.optional (pkgs.system == "x86_64-linux") gcc_multi ++
-  lib.optionals ((username == "ithinuel") && (pkg.system != "aarch64-darwin")) [
+  lib.optional (pkgs.stdenv.hostPlatform.system == "x86_64-linux") gcc_multi ++
+  lib.optionals ((username == "ithinuel") && (pkg.stdenv.hostPlatform.system != "aarch64-darwin")) [
     freecad
     kicad
     calibre
   ] ++
-  lib.optionals (pkgs.system != "aarch64-darwin") [
+  lib.optionals (pkgs.stdenv.hostPlatform.system != "aarch64-darwin") [
     gdb
     gdb-dashboard
   ];
@@ -104,7 +104,7 @@ in
     TCLLIBPATH = "${pkgs.awthemes}";
   };
 
-  xdg.mimeApps = lib.attrsets.optionalAttrs (lib.strings.hasSuffix "-linux" pkgs.system) {
+  xdg.mimeApps = lib.attrsets.optionalAttrs (lib.strings.hasSuffix "-linux" pkgs.stdenv.hostPlatform.system) {
     enable = true;
     defaultApplications = {
       "x-scheme-handler/http" = [ "firefox.desktop" ];
@@ -188,16 +188,9 @@ in
     lfs.enable = true;
     package = pkgs.gitFull;
 
-    userName = "Wilfried Chauveau";
-    userEmail = let user = "wilfried.chauveau"; domain = "ithinuel.me"; in "${user}@${domain}";
-    ignores = [ ".direnv" ".DS_Store" ".pre-commit-config.yaml" ];
-    signing.signByDefault = true;
-    signing.key = null;
-
-    delta.enable = true;
-    delta.options.side-by-side = true;
-
-    extraConfig = {
+    settings = {
+      user.name = "Wilfried Chauveau";
+      user.email = let user = "wilfried.chauveau"; domain = "ithinuel.me"; in "${user}@${domain}";
       init.defaultBranch = "main";
       rebase.autoSquash = true;
       log.showSignature = true;
@@ -206,7 +199,16 @@ in
 
       gui.tabsize = 4;
     };
+    ignores = [ ".direnv" ".DS_Store" ".pre-commit-config.yaml" ];
+    signing.signByDefault = true;
+    signing.key = null;
   };
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options.side-by-side = true;
+  };
+
   programs.gpg.enable = true;
   programs.htop.enable = true;
   programs.lazydocker.enable = true;

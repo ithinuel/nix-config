@@ -25,7 +25,7 @@ component of my system is isolated and clearly defined.
 
 ## Install on VM
 
-1. Start your machine with a live CD (see [here](https://nixos.org/download.html)).
+1. Start your machine with a live CD (see on [NixOS’ download page](https://nixos.org/download.html)).
 2. Run the following commands in a shell:
 
    ```sh

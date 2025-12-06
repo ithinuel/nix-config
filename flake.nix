@@ -4,10 +4,10 @@
   inputs = {
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    nixvim.url = "github:nix-community/nixvim/nixos-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixvim.url = "github:nix-community/nixvim/nixos-25.11";
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
 
@@ -67,7 +67,7 @@
         pkgs = mkPkgs system;
         modules = [
           sops-nix.homeManagerModules.sops
-          nixvim.homeManagerModules.nixvim
+          nixvim.homeModules.nixvim
           ./home.nix
         ];
         extraSpecialArgs = {

@@ -83,7 +83,10 @@
         "<c-t>" = "treesitter";
         "<c-o>" = "files";
         "<c-p>" = "buffers";
-        "<c-r>" = "live_grep_resume";
+        "<c-r>" = {
+          action = "live_grep";
+          settings.resume = true;
+        };
       };
       # Change the default behaviour on multiple selectinos from opening a buffer list to opening
       # the files directly.
