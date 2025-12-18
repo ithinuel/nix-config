@@ -214,7 +214,10 @@ in
   programs.lazydocker.enable = true;
   programs.lazygit = {
     enable = true;
-    settings.git.overrideGpg = true;
+    settings.git = {
+      overrideGpg = true;
+      commit.signOff = true;
+    };
   };
   programs.ripgrep = {
     enable = true;
