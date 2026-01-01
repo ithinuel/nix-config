@@ -51,6 +51,13 @@
     openFirewall = true;
   };
 
+  # Disable’s gnome indexers.
+  # I do not use them and their cache builds up out of reason.
+  services.gnome = {
+    localsearch.enable = false;
+    tinysparql.enable = false;
+  };
+
   # Configure console keymap
   console.keyMap = "fr-bepo";
 }
