@@ -93,6 +93,7 @@
       settings.actions.files.__raw = ''{ ["enter"] = require("fzf-lua").actions.file_edit }'';
     };
     gitsigns.enable = true;
+    image.enable = true;
     lazygit.enable = true;
     lspkind.enable = true;
     lsp-format.enable = true;
