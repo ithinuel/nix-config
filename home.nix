@@ -192,7 +192,10 @@ in
       user.name = "Wilfried Chauveau";
       user.email = let user = "wilfried.chauveau"; domain = "ithinuel.me"; in "${user}@${domain}";
       init.defaultBranch = "main";
-      rebase.autoSquash = true;
+      rebase = {
+        autoSquash = true;
+        updateRefs = true;
+      };
       log.showSignature = true;
 
       gpg.ssh.allowedSignersFile = config.sops.secrets.allowed_signers.path;
