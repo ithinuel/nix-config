@@ -115,20 +115,6 @@ in
     };
   };
 
-  dconf = {
-    enable = pkgs.stdenv.isLinux;
-    settings = {
-      "org/gnome/GHex" = {
-        group-data-by = "longwords";
-        show-offsets = true;
-      };
-      "org/gnome/meld" = {
-        show-line-numbers = true;
-        wrap-mode = "none";
-      };
-    };
-  };
-
   # Let home-manager manage itself
   programs.home-manager.enable = true;
   programs.nixvim = import ./nixvim.nix { inherit pkgs lib; };

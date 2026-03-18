@@ -78,6 +78,20 @@
           "org/gnome/nautilus/preferences" = {
             default-folder-viewer = "list-view";
           };
+
+          "org/gnome/GHex" = {
+            group-data-by = "longwords";
+            show-offsets = true;
+          };
+
+          "org/gnome/meld" = {
+            show-line-numbers = true;
+            wrap-mode = "none";
+          };
+
+          "org/gnome/mutter" = {
+            attach-modal-dialogs = false;
+          };
         };
       }];
     };
