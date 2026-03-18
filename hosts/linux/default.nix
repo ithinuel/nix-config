@@ -25,7 +25,7 @@
     format = "binary";
     owner = username;
     mode = "0600";
-    path = "/home/${username}/.sops/age/keys.txt";
+    path = "/home/${username}/.config/sops/age/keys.txt";
   };
 
   users.defaultUserShell = pkgs.zsh;

@@ -4,7 +4,7 @@ let
   homeDirectory = "/${userBase}/${username}";
 in
 {
-  sops.age.keyFile = homeDirectory + "/.sops/age/keys.txt";
+  sops.age.keyFile = homeDirectory + "/.config/sops/age/keys.txt";
   sops.secrets.allowed_signers = {
     sopsFile = pathRoot + "/secrets/allowed_signers.sops";
     format = "binary";
