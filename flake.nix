@@ -5,7 +5,7 @@
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
+    lanzaboote.url = "github:nix-community/lanzaboote/4eda91dd5abd2157a2c7bfb33142fc64da668b0a";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixvim.url = "github:nix-community/nixvim/nixos-25.11";

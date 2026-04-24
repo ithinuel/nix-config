@@ -1,4 +1,62 @@
-{ lib, pathRoot, config, ... }: {
+{ pkgs, lib, pathRoot, config, ... }:
+let
+  mdadmNotify =
+    let
+      # binaries
+      date = lib.getExe' pkgs.coreutils "date";
+      id = lib.getExe' pkgs.coreutils "id";
+      sort = lib.getExe' pkgs.coreutils "sort";
+      who = lib.getExe' pkgs.coreutils "who";
+      awk = lib.getExe pkgs.gawk;
+      notifySend = lib.getExe pkgs.libnotify;
+      sudo = lib.getExe' pkgs.sudo "sudo";
+      systemdCat = lib.getExe' pkgs.systemd "systemd-cat";
+    in
+    pkgs.writeShellScript "mdadm-notify" ''
+      # mdadm calls: PROGRAM <event> <device> [component]
+      EVENT="$1"
+      DEVICE="$2"
+      COMPONENT="$3"
+      TIMESTAMP="$(${date} '+%Y-%m-%d %H:%M:%S')"
+
+      case "$EVENT" in
+        Fail|FailSpare|DegradedArray|MoveSpare|SparesMissing)
+          URGENCY="critical"
+          ;;
+        RebuildStarted|RebuildFinished|RebuildNN)
+          URGENCY="normal"
+          ;;
+        TestMessage)
+          URGENCY="low"
+          ;;
+        *)
+          URGENCY="normal"
+          ;;
+      esac
+
+      MSG="[$HOSTNAME] mdadm $EVENT on $DEVICE''${COMPONENT:+ (component: $COMPONENT)} at $TIMESTAMP"
+
+      ${systemdCat} -t mdadm-notify -p \
+        $([ "$URGENCY" = "critical" ] && echo "err" || echo "info") \
+        echo "$MSG"
+
+      for USER_NAME in $(${who} | ${awk} '{print $1}' | ${sort} -u); do
+        USER_ID="$(${id} -u "$USER_NAME" 2>/dev/null)" || continue
+
+        DISPLAY=":0" \
+        DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$USER_ID/bus" \
+        XDG_RUNTIME_DIR="/run/user/$USER_ID" \
+          ${sudo} -u "$USER_NAME" \
+          ${notifySend} \
+            --urgency="$URGENCY" \
+            --icon="drive-harddisk" \
+            --app-name="mdadm" \
+            "RAID Alert: $EVENT" \
+            "$MSG" 2>/dev/null || true
+      done
+    '';
+in
+{
   imports = [
     ./disk.nix
   ];
@@ -13,15 +71,10 @@
 
   virtualisation.virtualbox.guest.enable = false;
 
-  # Enable RAID for disk redundancy
-  boot.swraid.enable = true;
+  # The rest of the RAID settings are populated by disko
   boot.swraid.mdadmConf = ''
-    ARRAY /dev/md/root metadata=1.2
+    PROGRAM ${mdadmNotify}
   '';
-
-  # Enable TPM 2.0 for fTPM auto-unlock capability
-  security.tpm2.enable = true;
-  security.tpm2.abrmd.enable = true;
 
   # Bootloader with lanzaboote for Secure Boot + measured boot
   boot = {
@@ -54,26 +107,32 @@
     lanzaboote = {
       enable = true;
       pkiBundle = "/var/lib/sbctl";
-      settings = {
-        extraEfiSysMountPoints = [ "/boot1" ]; # Also install Lanzaboote on the secondary boot partition.
 
-        # Auto generate the keys on first boot
-        autoGenerateKeys.enable = true;
-        # Auto enrole the key in the TPM & autoReboot to activate it
-        autoEnrollKeys = {
-          enable = true;
-          autoReboot = true;
-        };
+      configurationLimit = 8; # Required when measured boot is enabled.
+      extraEfiSysMountPoints = [ "/boot1" ]; # Also install Lanzaboote on the secondary boot partition.
 
-        # Enable measured boot (to auto unlock the LUKS volume)
-        # Needs call to systemd-cryptenroll, make sure to enroll with a pin too for added security.
-        measuredBoot = {
+      # Auto generate the keys on first boot
+      autoGenerateKeys.enable = true;
+
+      # Auto enrole the key in the TPM & autoReboot to activate it
+      autoEnrollKeys = {
+        enable = true;
+        autoReboot = true;
+      };
+
+      # Enable measured boot (to auto unlock the LUKS volume)
+      # Needs call to systemd-cryptenroll, make sure to enroll with a pin too for added security.
+      measuredBoot = {
+        enable = true;
+        pcrs = [
+          0 # SRTM, BIOS, Host Platform extensions, Embedded Option ROMs and PI Drivers
+          4 # UEFI Boot Manager Code and Boot Attempts
+          7 # Secure Boot Policy
+        ];
+        # Auto enroll the TPM
+        autoCryptenroll = {
           enable = true;
-          pcrs = [
-            0 # SRTM, BIOS, Host Platform extensions, Embedded Option ROMs and PI Drivers
-            4 # UEFI Boot Manager Code and Boot Attempts
-            7 # Secure Boot Policy
-          ];
+          device = "/dev/disk/by-id/cryptroot"; # Confirm what’s the actual name of this device
         };
       };
     };
