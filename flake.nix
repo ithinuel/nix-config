@@ -137,5 +137,6 @@
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
 
       nixosConfigurations.nixbox = mkNixosSystem "ithinuel" "nixbox";
+      nixosConfigurations.tleilax = mkNixosSystem "ithinuel" "tleilax";
     };
 }
