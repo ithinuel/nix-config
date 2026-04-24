@@ -25,11 +25,19 @@
 
   # Bootloader with lanzaboote for Secure Boot + measured boot
   boot = {
-    # Lanzaboote currently replaces the systemd-boot module.
-    # This setting is usually set to true in configuration.nix
-    # generated at installation time. So we force it to false
-    # for now.
-    systemd-boot.enable = lib.mkForce false;
+    loader = {
+      # Lanzaboote currently replaces the systemd-boot module.
+      # This setting is usually set to true in configuration.nix
+      # generated at installation time. So we force it to false
+      # for now.
+      systemd-boot.enable = lib.mkForce false;
+      efi = {
+        # the primary boot partition
+        efiSysMountPoint = "/boot0";
+        # Allows the installer to modify EfiVariables (not sure why this’d be needed).
+        canTouchEfiVariables = true;
+      };
+    };
 
     initrd = {
       # Required for measured boot
@@ -41,13 +49,6 @@
         keyFile = "/tmp/secret.key";
         allowDiscards = true;
       };
-    };
-
-    loader.efi = {
-      # the primary boot partition
-      efiSysMountPoint = "/boot0";
-      # Allows the installer to modify EfiVariables (not sure why this’d be needed).
-      canTouchEfiVariables = true;
     };
 
     lanzaboote = {
