@@ -92,17 +92,8 @@ in
       };
     };
 
-    initrd = {
-      # Required for measured boot
-      systemd.enable = true;
-
-      # Configure single LUKS encryption for the entire RAID array
-      luks.devices."root" = {
-        device = "/dev/md/root";
-        keyFile = "/tmp/secret.key";
-        allowDiscards = true;
-      };
-    };
+    # Required for measured boot ?
+    initrd.systemd.enable = true;
 
     lanzaboote = {
       enable = true;
@@ -132,7 +123,7 @@ in
         # Auto enroll the TPM
         autoCryptenroll = {
           enable = true;
-          device = "/dev/disk/by-id/cryptroot"; # Confirm what’s the actual name of this device
+          device = "/dev/mapper/crypted"; # Confirm what’s the actual name of this device
         };
       };
     };
