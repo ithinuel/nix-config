@@ -29,14 +29,14 @@ component of my system is isolated and clearly defined.
 2. Run the following commands in a shell:
 
    ```sh
-   sudo nix --experimental-features 'nix-command flakes' run github:ithinuel/dotfiles <your_host_name>
+   sudo nix --experimental-features 'nix-command flakes' run github:ithinuel/nix-config <your_host_name>
    ```
 
 3. reboot
 4. After reboot, run the following command to set up the system:
 
    ```sh
-   home-manager --flake github:ithinuel/dotfiles switch
+   home-manager --flake github:ithinuel/nix-config switch
    ```
 
 ### Why not using `disko-install` ?
