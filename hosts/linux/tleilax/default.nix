@@ -19,22 +19,63 @@
     ARRAY /dev/md/root metadata=1.2
   '';
 
-  # Configure single LUKS encryption for the entire RAID array
-  boot.initrd.luks.devices."root" = {
-    device = "/dev/md/root";
-    keyFile = "/tmp/secret.key";
-    allowDiscards = true;
-  };
-
   # Enable TPM 2.0 for fTPM auto-unlock capability
   security.tpm2.enable = true;
   security.tpm2.abrmd.enable = true;
 
   # Bootloader with lanzaboote for Secure Boot + measured boot
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.lanzaboote = {
-    enable = true;
-    pkiBundle = "/etc/secureboot";
+  boot = {
+    # Lanzaboote currently replaces the systemd-boot module.
+    # This setting is usually set to true in configuration.nix
+    # generated at installation time. So we force it to false
+    # for now.
+    systemd-boot.enable = lib.mkForce false;
+
+    initrd = {
+      # Required for measured boot
+      systemd.enable = true;
+
+      # Configure single LUKS encryption for the entire RAID array
+      luks.devices."root" = {
+        device = "/dev/md/root";
+        keyFile = "/tmp/secret.key";
+        allowDiscards = true;
+      };
+    };
+
+    loader.efi = {
+      # the primary boot partition
+      efiSysMountPoint = "/boot0";
+      # Allows the installer to modify EfiVariables (not sure why this’d be needed).
+      canTouchEfiVariables = true;
+    };
+
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
+      settings = {
+        extraEfiSysMountPoints = [ "/boot1" ]; # Also install Lanzaboote on the secondary boot partition.
+
+        # Auto generate the keys on first boot
+        autoGenerateKeys.enable = true;
+        # Auto enrole the key in the TPM & autoReboot to activate it
+        autoEnrollKeys = {
+          enable = true;
+          autoReboot = true;
+        };
+
+        # Enable measured boot (to auto unlock the LUKS volume)
+        # Needs call to systemd-cryptenroll, make sure to enroll with a pin too for added security.
+        measuredBoot = {
+          enable = true;
+          pcrs = [
+            0 # SRTM, BIOS, Host Platform extensions, Embedded Option ROMs and PI Drivers
+            4 # UEFI Boot Manager Code and Boot Attempts
+            7 # Secure Boot Policy
+          ];
+        };
+      };
+    };
   };
 
   nixpkgs.hostPlatform = lib.mkForce "x86_64-linux";
