@@ -5,6 +5,7 @@
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
+    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixvim.url = "github:nix-community/nixvim/nixos-25.11";
@@ -15,12 +16,13 @@
     disko.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, ... }@inputs:
+  outputs = { self, utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, lanzaboote, ... }@inputs:
     let
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
@@ -46,6 +48,7 @@
       mkNixosBaseSystem = username: hostname: nixpkgs.lib.nixosSystem {
         modules = [
           disko.nixosModules.disko
+          lanzaboote.nixosModules.lanzaboote
           sops-nix.nixosModules.sops
           nixosModules.desktop
           ./hosts
