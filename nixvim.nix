@@ -72,6 +72,12 @@
   };
 
   plugins = {
+    aerial = {
+      enable = true;
+      settings = {
+        backends = [ "lsp" "treesitter" ];
+      };
+    };
     bufferline.enable = true;
     copilot-lua.enable = true;
     dap.enable = true;
@@ -121,7 +127,14 @@
         { text = [ "%s" ]; } # signs
       ];
     };
-    treesitter.enable = true;
+    treesitter = {
+      enable = true;
+      settings = {
+        highlight.enable = true;
+        indent.enable = true;
+        folding.enable = true;
+      };
+    };
     web-devicons.enable = true;
     which-key = {
       enable = true;
@@ -216,6 +229,8 @@
 
     { key = "."; action = ":"; }
     { key = ":"; action = "."; }
+
+    { mode = "n"; key = "<leader>aa"; action = "<cmd>AerialToggle<CR>"; options.desc = "Toggles the Aerial view"; }
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     # bépo remapped
     { key = "«"; action = "<"; }
