@@ -3,7 +3,7 @@ keys:
   - &at_work 9F2D999DD7C7CCCFA7A5B357FD66024FC8A1D433
   - &nixbox_user age1gdrs6an66v3k3k0rf76wl5h46nym7yrra2nuryaajuct6c76tytq6ggxhz
   - &nixbox age1wg2jjmjq55xnnguxrzu0saf33jrxaaq9rcgtt4mllqa34ul7ncss68ted6
-  - &tleilax placeholder
+  - &tleilax age139cukquufmk8yt9zg5s07z8sw6kdcwxr59zntmumd682c96wde7sq4a8v5
   - &tleilax_user age1gdrs6an66v3k3k0rf76wl5h46nym7yrra2nuryaajuct6c76tytq6ggxhz
 creation_rules:
   - path_regex: secrets/tleilax\..*\.sops

@@ -104,14 +104,14 @@
         packages.install-from-live = pkgs.writeShellApplication {
           name = "install-from-live";
           text = ''
-            local diskoArgs="-m mount"
+            diskoArgs="-m mount"
             if [[ "$1" == "-f" ]]; then
               shift
               diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
             fi
             [ -z "$1" ] && { echo "Usage..."; exit 1; }
             nix run --experimental-features 'nix-command flakes' ${disko}#disko -- \
-              -f "${self}#$1" ''${diskoArgs}
+              -f "${self}#$1" "''${diskoArgs}"
             nixos-install --flake "${self}#$1" --no-root-password
           '';
           meta = { description = "NixOS installation script"; };

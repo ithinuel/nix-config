@@ -59,5 +59,8 @@
   };
 
   # Configure console keymap
-  console.keyMap = "fr-bepo";
+  console = {
+    earlySetup = true;
+    useXkbConfig = true;
+  };
 }
