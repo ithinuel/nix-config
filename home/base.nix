@@ -67,11 +67,6 @@ in
     ghex
   ] ++
   lib.optional (pkgs.stdenv.hostPlatform.system == "x86_64-linux") gcc_multi ++
-  lib.optionals ((username == "ithinuel") && (pkg.stdenv.hostPlatform.system != "aarch64-darwin")) [
-    freecad
-    kicad
-    calibre
-  ] ++
   lib.optionals (pkgs.stdenv.hostPlatform.system != "aarch64-darwin") [
     gdb
     gdb-dashboard
@@ -117,7 +112,7 @@ in
 
   # Let home-manager manage itself
   programs.home-manager.enable = true;
-  programs.nixvim = import ./nixvim.nix { inherit pkgs lib; };
+  programs.nixvim = import ../nixvim.nix { inherit pkgs lib; };
 
   programs.zsh = {
     enable = true;
@@ -199,7 +194,24 @@ in
   };
 
   programs.gpg.enable = true;
-  programs.htop.enable = true;
+  programs.btop.enable = true;
+  programs.htop = {
+    enable = true;
+    settings = {
+      show_program_path = false;
+    } // (
+      let mkSet = list: lib.genAttrs list (_: true);
+      in mkSet [
+        "hide_userland_threads"
+        "highlight_base_name"
+        "shadow_distribution_path_prefix"
+        "highlight_changes"
+        "show_merged_command"
+        "hide_function_bar"
+        "tree_view"
+      ]
+    );
+  };
   programs.lazydocker.enable = true;
   programs.lazygit = {
     enable = true;
@@ -229,6 +241,7 @@ in
   '';
   programs.ruff.enable = true;
   programs.ruff.settings = { };
+  programs.nix-index.enable = true;
 
   services.home-manager.autoExpire.enable = pkgs.stdenv.isLinux;
 }

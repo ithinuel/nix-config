@@ -59,5 +59,15 @@
   };
 
   # Configure console keymap
-  console.keyMap = "fr-bepo";
+  console = {
+    earlySetup = true;
+    useXkbConfig = true;
+  };
+
+  # Mitigation for CVE-2026-43284 / CVE-2026-43500 (aka DirtyFrag)
+  boot.blacklistedKernelModules = [
+    "esp4"
+    "esp6"
+    "rxrpc"
+  ];
 }

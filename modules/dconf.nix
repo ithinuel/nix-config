@@ -61,6 +61,7 @@
 
           "org/gnome/desktop/wm/preferences" = {
             focus-mode = "sloppy";
+            button-layout = ":minimize,maximize,close";
           };
 
           "org/gnome/evince/default" = {

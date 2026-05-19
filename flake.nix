@@ -5,21 +5,22 @@
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
-    lanzaboote.url = "github:nix-community/lanzaboote/v0.4.1";
+    lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixvim.url = "github:nix-community/nixvim/nixos-25.11";
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    #llm-agents.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, lanzaboote, ... }@inputs:
@@ -27,6 +28,11 @@
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
       pathRoot = ./.;
+      homeProfiles = {
+        linux-desktop = ./home/profiles/linux-desktop.nix;
+        macos-desktop = ./home/profiles/macos-desktop.nix;
+        personal = ./home/profiles/personal.nix;
+      };
       nixosModules.desktop = ./modules/desktop.nix;
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
@@ -71,7 +77,7 @@
         modules = [
           sops-nix.homeManagerModules.sops
           nixvim.homeModules.nixvim
-          ./home.nix
+          ./home/base.nix
         ];
         extraSpecialArgs = {
           inherit username pathRoot;
@@ -105,13 +111,15 @@
         packages.install-from-live = pkgs.writeShellApplication {
           name = "install-from-live";
           text = ''
-            if [ -z "''${1-}" ]; then
-              echo "Usage: install-from-live <host-name>"
-              exit 1
+            diskoArgs="-m mount"
+            if [[ "$1" == "-f" ]]; then
+              shift
+              diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
             fi
+            [ -z "$1" ] && { echo "Usage..."; exit 1; }
             nix run --experimental-features 'nix-command flakes' ${disko}#disko -- \
-              -f "${self}#$1" -m destroy,format,mount --yes-wipe-all-disks && \
-            nixos-install --flake "${self}#$1" --no-root-password
+              -f "${self}#$1" "''${diskoArgs}"
+            nixos-install --flake "${self}#$1" --no-root-password --no-channel-copy
           '';
           meta = { description = "NixOS installation script"; };
         };
@@ -123,7 +131,7 @@
       }))
     // {
       inherit nixosModules;
-      lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig; };
+      lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig homeProfiles; };
       templates = {
         simple = {
           description = "Simple template with linting & formatting for nix’s file & a devShell";
@@ -132,10 +140,15 @@
       };
 
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
+      homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
+        modules = with homeProfiles; [ linux-desktop personal ];
+        specialArgs.llm-agents = inputs.llm-agents.packages."x86_64-linux";
+      };
       homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
 
       nixosConfigurations.nixbox = mkNixosSystem "ithinuel" "nixbox";
+      nixosConfigurations.tleilax = mkNixosSystem "ithinuel" "tleilax";
     };
 }

@@ -2,8 +2,9 @@
 
 ## Supported hosts
 
-- `nixbox`: in VirtualBox on x86_64
-- `ithinuel-air`: mac book-air M1
+- `nixbox`: NixOS in VirtualBox on x86_64
+- `tleilax`: NixOS desktop on x86_64
+- `ithinuel-air`: macBook Air M1
 
 ## Overview of Repository Structure
 
@@ -12,12 +13,15 @@ The structure is organised as follows:
 
 - **flake.nix / flake.lock**: The main Nix flake configuration tying together system, home-manager,
   and other configurations, ensuring reproducible builds.
-- **hosts/**: Host-specific configurations (e.g. for `nixos`, `nixbox`, etc.).
-- **home/**: Contains home-manager configurations and personal settings, including the Neovim
-  configuration file (`neovim.vim`).
-  Note: The `coc` plugin is not added using home-manager’s configuration for `neovim.coc`.
-  It is added manually instead and its `coc-settings.json` file is linked out of store rather than
-  locked. This is because the spellchecker plugin needs to be able do add dictionary entries it it.
+- **hosts/**: Host-specific configurations split by platform (`darwin/`, `linux/`) with a shared
+  base in `default.nix` and per-host subdirectories.
+- **home/base.nix**: Base home-manager configuration applied to all hosts.
+- **home/profiles/**: Optional home-manager layers (e.g. `linux-desktop`, `macos-desktop`,
+  `personal`) that can be composed on top of the base. These are exported via `lib.homeProfiles`
+  for downstream flakes to reuse.
+- **modules/**: Reusable NixOS modules (e.g. `desktop.nix`) exported via `nixosModules` for
+  downstream flakes.
+- **nixvim.nix**: Neovim configuration using nixvim.
 - **overlays/**: Custom Nix overlays to extend or modify the default package set.
 
 This structure is designed to simplify maintenance, allow easy customization, and ensure that each
@@ -25,7 +29,7 @@ component of my system is isolated and clearly defined.
 
 ## Install on VM
 
-1. Start your machine with a live CD (see on [NixOS’ download page](https://nixos.org/download.html)).
+1. Start your machine with a live CD (see on [NixOS' download page](https://nixos.org/download.html)).
 2. Run the following commands in a shell:
 
    ```sh
@@ -51,7 +55,7 @@ all and the installation fails.
 - install nix-darwin
 
 ```sh
-nix --experimental-features 'nix-command flakes'  run nix-darwin/nix-darwin-24.11 -- switch --flake github:ithinuel/dotfiles/nixed#<your_host_name>
+nix --experimental-features 'nix-command flakes' run nix-darwin/nix-darwin-25.11 -- switch --flake github:ithinuel/nix-config#<your_host_name>
 ```
 
 ## Maintenance

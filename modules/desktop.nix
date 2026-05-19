@@ -19,10 +19,6 @@
       setSocketVariable = true;
     };
 
-    # Enable automatic login for the user.
-    services.displayManager.autoLogin.enable = true;
-    services.displayManager.autoLogin.user = username;
-
     # make udev map debug probes to plugdev
     services.udev.packages = [ pkgs.picoprobe-udev-rules ];
     services.gvfs.enable = true;

@@ -1,4 +1,4 @@
-{ lib, pathRoot, config, ... }: {
+{ lib, pathRoot, config, username, ... }: {
   imports = [
     ./disk.nix
   ];
@@ -26,4 +26,7 @@
 
   security.pki.certificateFiles = [ (pathRoot + "/certs/ithinuel.local.crt") ];
   desktop.enable = true;
+  # Enable automatic login for the user.
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = username;
 }
