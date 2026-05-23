@@ -12,6 +12,7 @@
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    veloren.url = "gitlab:veloren/veloren/3a05b7fc4939b0dfc8d1d320a1364708ce6a129a";
 
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -23,7 +24,7 @@
     #llm-agents.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, utils, home-manager, nix-darwin, nixpkgs, disko, git-hooks, sops-nix, nixvim, lanzaboote, ... }@inputs:
+  outputs = { self, utils, home-manager, nix-darwin, nixpkgs, sops-nix, ... }@inputs:
     let
       overlays = import ./overlays inputs;
       mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
@@ -53,8 +54,8 @@
         };
       mkNixosBaseSystem = username: hostname: nixpkgs.lib.nixosSystem {
         modules = [
-          disko.nixosModules.disko
-          lanzaboote.nixosModules.lanzaboote
+          inputs.disko.nixosModules.disko
+          inputs.lanzaboote.nixosModules.lanzaboote
           sops-nix.nixosModules.sops
           nixosModules.desktop
           ./hosts
@@ -76,7 +77,7 @@
         pkgs = mkPkgs system;
         modules = [
           sops-nix.homeManagerModules.sops
-          nixvim.homeModules.nixvim
+          inputs.nixvim.homeModules.nixvim
           ./home/base.nix
         ];
         extraSpecialArgs = {
@@ -89,7 +90,7 @@
         inherit overlays;
         formatter = pkgs.nixpkgs-fmt;
         checks = {
-          pre-commit-check = git-hooks.lib.${system}.run {
+          pre-commit-check = inputs.git-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
               deadnix.enable = true;
@@ -117,7 +118,7 @@
               diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
             fi
             [ -z "$1" ] && { echo "Usage..."; exit 1; }
-            nix run --experimental-features 'nix-command flakes' ${disko}#disko -- \
+            nix run --experimental-features 'nix-command flakes' ${inputs.disko}#disko -- \
               -f "${self}#$1" "''${diskoArgs}"
             nixos-install --flake "${self}#$1" --no-root-password --no-channel-copy
           '';
@@ -142,7 +143,10 @@
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
         modules = with homeProfiles; [ linux-desktop personal ];
-        specialArgs.llm-agents = inputs.llm-agents.packages."x86_64-linux";
+        specialArgs = {
+          llm-agents = inputs.llm-agents.packages."x86_64-linux";
+          inherit (inputs) veloren;
+        };
       };
       homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
 

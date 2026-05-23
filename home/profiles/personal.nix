@@ -1,4 +1,22 @@
-{ pkgs, lib, llm-agents ? { }, ... }: {
+{ pkgs, lib, llm-agents ? { }, veloren ? { }, ... }:
+let
+  my-veloren = pkgs.symlinkJoin {
+    name = "veloren-with-desktop";
+
+    paths = [
+      veloren.packages.${pkgs.stdenv.hostPlatform.system}.veloren-voxygen
+    ];
+
+    postBuild = ''
+      mkdir -p $out/share/applications
+      mkdir -p $out/share/icons/hicolor/256x256/apps
+
+      cp ${veloren}/assets/voxygen/net.veloren.veloren.desktop  $out/share/applications/
+      cp ${veloren}/assets/voxygen/net.veloren.veloren.png $out/share/icons/hicolor/256x256/apps/net.veloren.veloren.png
+    '';
+  };
+in
+{
   home.packages = [
     pkgs.obsidian
     pkgs.vlc
@@ -14,5 +32,7 @@
     pkgs.freecad
     pkgs.kicad
     pkgs.calibre
+
+    my-veloren
   ];
 }
