@@ -4,15 +4,15 @@
   inputs = {
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixvim.url = "github:nix-community/nixvim/nixos-25.11";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
     llm-agents.url = "github:numtide/llm-agents.nix";
-    veloren.url = "gitlab:veloren/veloren/3a05b7fc4939b0dfc8d1d320a1364708ce6a129a";
+    veloren.url = "gitlab:veloren/veloren/weekly";
 
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";

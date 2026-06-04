@@ -53,12 +53,7 @@ in
     let
       element = mkAutostart { pkg = element-desktop; exec = "element-desktop"; flag = "--hidden"; };
       slack = mkAutostart { pkg = pkgs.slack; exec = "slack"; flag = "--startup"; };
-      discord = mkAutostart {
-        pkg = pkgs.discord;
-        src = "opt/Discord/discord.desktop";
-        exec = "discord";
-        flag = "--start-minimized";
-      };
+      discord = mkAutostart { pkg = pkgs.discord; exec = "discord"; flag = "--start-minimized"; };
     in
     {
       enable = true;

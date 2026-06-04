@@ -156,7 +156,12 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    (blender.override { config.cudaSupport = true; })
+    (blender.override {
+      config = {
+        cudaSupport = true;
+        rocmSupport = false;
+      };
+    })
   ];
 
   virtualisation.virtualbox.host.enable = true;
