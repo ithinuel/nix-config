@@ -23,6 +23,7 @@ in
     pkgs.slack
     pkgs.siril
     pkgs.stellarium
+    pkgs.prismlauncher
     llm-agents.copilot-cli
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.homebank
