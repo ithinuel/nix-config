@@ -25,6 +25,7 @@ in
     pkgs.stellarium
     pkgs.prismlauncher
     llm-agents.copilot-cli
+    llm-agents.mistral-vibe
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.homebank
     pkgs.saleae-logic-2
