@@ -149,8 +149,8 @@ in
     history.size = 1000000;
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "dnf" "python" ];
       theme = "af-magic";
+      plugins = [ "git" ];
     };
   };
 
