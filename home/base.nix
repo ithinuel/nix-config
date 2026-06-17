@@ -158,14 +158,22 @@ in
     settings = {
       add_newline = false;
       format = ''
-        $cmd_duration$status$fill $time $fill ''${custom.virtualenv}$username@$hostname
-        $directory $character
+        $cmd_duration$status$fill $time $fill ($python )$username@$hostname
+        ($direnv )$directory $character
       '';
       right_format = ''([ \($git_branch( $git_status)\)](bright-blue))'';
 
-      fill = {
-        symbol = "-";
-        style = "237";
+      character = {
+        success_symbol = "[»](bold 105)";
+        error_symbol = "[»](bold red)";
+        vimcmd_symbol = "[»](bold blue)";
+      };
+
+      cmd_duration = {
+        min_time = 0;
+        format = "[$duration]($style) ";
+        style = "bright-black";
+        show_notifications = true;
       };
 
       directory = {
@@ -178,12 +186,26 @@ in
         read_only_style = "red";
       };
 
+      direnv = {
+        disabled = false;
+        format = "$allowed";
+        allowed_msg = " ";
+        not_allowed_msg = " ";
+        denied_msg = " ";
+      };
+
+      fill = {
+        symbol = "-";
+        style = "237";
+      };
+
       git_branch = {
         format = ''[$branch](bright-red)'';
         style = "bright-blue";
         truncation_length = 20;
         truncation_symbol = "…";
       };
+
       git_status = {
         format = "$all_status$ahead_behind";
         ahead = "⇡$count";
@@ -199,34 +221,14 @@ in
         deleted = "🗑";
       };
 
-      custom = {
-        git_dirty = {
-          command = ''
-            git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
-            git diff --quiet --ignore-submodules --cached -- &&
-            git diff --quiet --ignore-submodules -- ||
-            printf '*'
-          '';
-          when = "true";
-          format = "[$output]($style)";
-          style = "bright-yellow";
-        };
-
-        virtualenv = {
-          command = ''
-            env_dir="''${VIRTUAL_ENV:-$CONDA_DEFAULT_ENV}"
-            [ -n "$env_dir" ] && printf '(%s) ' "''${env_dir##*/}"
-          '';
-          when = "true";
-          format = "$output ";
-          style = "bright-black";
-        };
+      hostname = {
+        ssh_only = false;
+        format = "[$hostname]($style)";
+        style = "bright-black";
       };
 
-      character = {
-        success_symbol = "[»](bold 105)";
-        error_symbol = "[»](bold red)";
-        vimcmd_symbol = "[»](bold blue)";
+      python = {
+        format = "[\\($symbol$virtualenv\\)](bright-black)";
       };
 
       status = {
@@ -235,30 +237,17 @@ in
         disabled = false;
       };
 
-      username = {
-        show_always = true;
-        format = "[$user]($style)";
-        style_user = "bright-black";
-        style_root = "bright-red";
-      };
-
-      hostname = {
-        ssh_only = false;
-        format = "[$hostname]($style)";
-        style = "bright-black";
-      };
-
       time = {
         disabled = false;
         format = "[$time]($style)";
         style = "bright-black";
       };
 
-      cmd_duration = {
-        min_time = 0;
-        format = "[$duration]($style) ";
-        style = "bright-black";
-        show_notifications = true;
+      username = {
+        show_always = true;
+        format = "[$user]($style)";
+        style_user = "bright-black";
+        style_root = "bright-red";
       };
     };
   };
