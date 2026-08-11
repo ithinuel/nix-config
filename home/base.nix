@@ -120,9 +120,9 @@ in
     enable = true;
     package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
     settings = {
-      theme = "adwaita dark";
+      theme = "Adwaita Dark";
       focus-follows-mouse = true;
-      background-opacity = 0.75;
+      background-opacity = 0.95;
       background-blur-radius = 20;
     };
   };
