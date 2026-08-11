@@ -6,22 +6,23 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    mac-app-util.url = "github:ithinuel/mac-app-util/fix/missing-icons";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
-    llm-agents.url = "github:numtide/llm-agents.nix";
-    veloren.url = "gitlab:veloren/veloren/weekly";
 
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    #llm-agents.inputs.nixpkgs.follows = "nixpkgs";
+    # llm-agents use its own nixpkgs for compatibility.
   };
 
   outputs = { self, utils, home-manager, nix-darwin, nixpkgs, sops-nix, ... }@inputs:
@@ -38,6 +39,7 @@
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
         modules = [
           sops-nix.darwinModules.sops
+          inputs.mac-app-util.darwinModules.default
           ./hosts
           ./hosts/darwin
         ];
@@ -73,12 +75,14 @@
           ];
         };
 
-      mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration {
+      mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration rec {
         pkgs = mkPkgs system;
         modules = [
           sops-nix.homeManagerModules.sops
           inputs.nixvim.homeModules.nixvim
           ./home/base.nix
+        ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+          inputs.mac-app-util.homeManagerModules.default
         ];
         extraSpecialArgs = {
           inherit username pathRoot;
@@ -145,10 +149,14 @@
         modules = with homeProfiles; [ linux-desktop personal ];
         specialArgs = {
           llm-agents = inputs.llm-agents.packages."x86_64-linux";
-          inherit (inputs) veloren;
         };
       };
-      homeConfigurations."ithinuel@ithinuel-air" = mkHomeManagerConfig "ithinuel" "aarch64-darwin";
+      homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" "aarch64-darwin").extendModules {
+        modules = with homeProfiles; [ macos-desktop personal ];
+        specialArgs = {
+          llm-agents = inputs.llm-agents.packages."aarch64-darwin";
+        };
+      };
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
 

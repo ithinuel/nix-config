@@ -12,13 +12,6 @@
             theme-variant = "dark";
           };
 
-          # this magic uuid is the default profile id used by Tilix
-          # see https://github.com/gnunn1/tilix/blob/9dee5ad10138f609769906ca1f554c3a9ff2b1ba/source/gx/tilix/preferences.d#L320
-          "com/gexperts/Tilix/profiles/2b7c4080-0ddd-46c5-8f23-563fd3ba789d" = {
-            scrollback-unlimited = true;
-            visible-name = "Default";
-          };
-
           "org/gnome/TextEditor" = {
             highlight-current-line = true;
             show-grid = false;

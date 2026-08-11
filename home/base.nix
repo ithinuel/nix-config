@@ -42,6 +42,10 @@ in
 
     # gui tools
     meld
+    obsidian
+    (if pkgs.stdenv.hostPlatform.isDarwin then vlc-bin else vlc)
+    (if pkgs.stdenv.hostPlatform.isDarwin then libreoffice-bin else libreoffice)
+    wireshark
 
     # Rust accelerated cli tools
     bacon
@@ -58,7 +62,6 @@ in
   ] ++
   lib.optionals pkgs.stdenv.isLinux [
     firefox
-    tilix
 
     usbutils
     xclip
@@ -113,6 +116,16 @@ in
   # Let home-manager manage itself
   programs.home-manager.enable = true;
   programs.nixvim = import ../nixvim.nix { inherit pkgs lib; };
+  programs.ghostty = {
+    enable = true;
+    package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
+    settings = {
+      theme = "adwaita dark";
+      focus-follows-mouse = true;
+      background-opacity = 0.75;
+      background-blur-radius = 20;
+    };
+  };
 
   programs.zsh = {
     enable = true;
