@@ -146,10 +146,6 @@ in
       gpristine = "git reset --hard && git clean --force -dfx -e .direnv -e .pre-commit-config.yaml";
 
       fd = "fd -H";
-      ll = "eza -l --git";
-      lla = "eza -la --git";
-      ls = "eza";
-      lsa = "eza -lah --git";
       cat = "bat -p";
       lg = "lazygit";
       du = "dust --reverse";
@@ -272,7 +268,12 @@ in
     nix-direnv.enable = true;
     silent = true;
   };
-  programs.eza.enable = true;
+  programs.eza = {
+    enable = true;
+    icons = "auto";
+    git = true;
+    extraOptions = [ "--group-directories-first" ];
+  };
   programs.fd.enable = true;
   programs.gh.enable = true;
   programs.git = {

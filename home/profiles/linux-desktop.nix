@@ -34,10 +34,7 @@ in
 
   programs.obs-studio.enable = true;
   programs.discord.enable = true;
-  programs.element-desktop = {
-    enable = true;
-    package = element-desktop;
-  };
+  programs.element-desktop.package = element-desktop;
   programs.gnome-shell = {
     enable = true;
     extensions = [
