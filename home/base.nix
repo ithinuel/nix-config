@@ -120,6 +120,7 @@ in
       focus-follows-mouse = true;
       background-opacity = 0.95;
       background-blur-radius = 20;
+      shell-integration-features = "ssh-terminfo,ssh-env";
     };
   };
 
