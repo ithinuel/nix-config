@@ -5,13 +5,6 @@
       # A "user" profile with a database
       profiles.user.databases = [{
         settings = with lib.gvariant; {
-          "com/gexperts/Tilix" = {
-            accelerators-enabled = true;
-            focus-follow-mouse = true;
-            prompt-on-close = true;
-            theme-variant = "dark";
-          };
-
           "org/gnome/TextEditor" = {
             highlight-current-line = true;
             show-grid = false;
