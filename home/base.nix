@@ -152,7 +152,14 @@ in
       hm = "home-manager";
     };
 
-    history.size = 1000000;
+    history = {
+      size = 1000000;
+      ignoreDups = true;
+      ignoreAllDups = true;
+      saveNoDups = true;
+      findNoDups = true;
+      expireDuplicatesFirst = true;
+    };
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" ];
