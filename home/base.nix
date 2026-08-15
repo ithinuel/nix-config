@@ -131,26 +131,7 @@ in
     syntaxHighlighting.enable = true;
     enableVteIntegration = true;
 
-    shellAliases = {
-      gs = "git submodule";
-      gk = "gitk --all --branches --word-diff";
-      gg = "lazygit";
-      gdto = "git difftool -y";
-      gsta = "git stash push --keep-index";
-      gsti = "gst --ignored";
-      gfa = "git fetch --all --recurse-submodules --prune";
-      gbvv = "git branch -vv";
-      gpristine = "git reset --hard && git clean --force -dfx -e .direnv -e .pre-commit-config.yaml";
-
-      fd = "fd -H";
-      cat = "bat -p";
-      lg = "lazygit";
-      du = "dust --reverse";
-
-      hme = "home-manager edit";
-      hms = "home-manager switch";
-      hm = "home-manager";
-    };
+    shellAliases = import ./shell-aliases.nix { inherit lib; };
 
     history = {
       size = 1000000;
@@ -159,10 +140,6 @@ in
       saveNoDups = true;
       findNoDups = true;
       expireDuplicatesFirst = true;
-    };
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ "git" ];
     };
   };
 
