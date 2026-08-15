@@ -66,7 +66,6 @@ in
   ] ++
   lib.optionals isLinux [
     usbutils
-    xclip
 
     ghex
   ] ++
