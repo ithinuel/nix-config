@@ -1,6 +1,10 @@
-{ pkgs, lib, llm-agents ? { }, ... }: {
+{ pkgs, lib, llm-agents ? { }, ... }:
+let
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
+in
+{
   programs = {
-    calibre.enable = pkgs.stdenv.hostPlatform.isLinux;
+    calibre.enable = isLinux;
     element-desktop.enable = true;
     prismlauncher.enable = true;
   };
@@ -9,7 +13,7 @@
     pkgs.homebank
     llm-agents.copilot-cli
     llm-agents.mistral-vibe
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
+  ] ++ lib.optionals isLinux [
     pkgs.vlc
     pkgs.siril
     pkgs.stellarium

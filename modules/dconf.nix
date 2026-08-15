@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }: {
   config = lib.mkIf config.desktop.enable {
     programs.dconf = {
-      enable = pkgs.stdenv.isLinux;
+      enable = pkgs.stdenv.hostPlatform.isLinux;
       # A "user" profile with a database
       profiles.user.databases = [{
         settings = with lib.gvariant; {

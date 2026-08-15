@@ -1,6 +1,7 @@
 { config, pkgs, lib, username, pathRoot, ... }:
 let
-  userBase = if pkgs.stdenv.isDarwin then "Users" else "home";
+  inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux isx86_64;
+  userBase = if isDarwin then "Users" else "home";
   homeDirectory = "/${userBase}/${username}";
 in
 {
@@ -39,12 +40,15 @@ in
     minicom
     clang-tools
     cmake-format
+    gdb
+    gdb-dashboard
 
     # gui tools
     meld
     obsidian
-    (if pkgs.stdenv.hostPlatform.isDarwin then vlc-bin else vlc)
-    (if pkgs.stdenv.hostPlatform.isDarwin then libreoffice-bin else libreoffice)
+    (if isDarwin then vlc-bin else vlc)
+    (if isDarwin then libreoffice-bin else libreoffice)
+    (if isDarwin then firefox-bin else firefox)
     wireshark
 
     # Rust accelerated cli tools
@@ -60,20 +64,13 @@ in
     # custom packages
     awthemes
   ] ++
-  lib.optionals pkgs.stdenv.isLinux [
-    firefox
-
+  lib.optionals isLinux [
     usbutils
     xclip
 
-    libreoffice
     ghex
   ] ++
-  lib.optional (pkgs.stdenv.hostPlatform.system == "x86_64-linux") gcc_multi ++
-  lib.optionals (pkgs.stdenv.hostPlatform.system != "aarch64-darwin") [
-    gdb
-    gdb-dashboard
-  ];
+  lib.optional (isLinux && isx86_64) gcc_multi;
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -98,11 +95,11 @@ in
   };
 
   home.sessionVariables = {
-    LESS = if pkgs.stdenv.isDarwin then "--mouse" else "";
+    LESS = if isDarwin then "--mouse" else "";
     TCLLIBPATH = "${pkgs.awthemes}";
   };
 
-  xdg.mimeApps = lib.attrsets.optionalAttrs (lib.strings.hasSuffix "-linux" pkgs.stdenv.hostPlatform.system) {
+  xdg.mimeApps = lib.attrsets.optionalAttrs isLinux {
     enable = true;
     defaultApplications = {
       "x-scheme-handler/http" = [ "firefox.desktop" ];
@@ -118,7 +115,7 @@ in
   programs.nixvim = import ../nixvim.nix { inherit pkgs lib; };
   programs.ghostty = {
     enable = true;
-    package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
+    package = if isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
     settings = {
       theme = "Adwaita Dark";
       focus-follows-mouse = true;
@@ -355,5 +352,5 @@ in
   programs.ruff.settings = { };
   programs.nix-index.enable = true;
 
-  services.home-manager.autoExpire.enable = pkgs.stdenv.isLinux;
+  services.home-manager.autoExpire.enable = isLinux;
 }

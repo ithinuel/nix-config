@@ -1,4 +1,8 @@
-{ pkgs, lib }: {
+{ pkgs, lib }:
+let
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
+in
+{
   enable = true;
   vimAlias = true;
   defaultEditor = true;
@@ -171,7 +175,7 @@
     servers = {
       asm_lsp.enable = true;
       bashls.enable = true;
-      bitbake_language_server.enable = pkgs.stdenv.isLinux;
+      bitbake_language_server.enable = isLinux;
       clangd.enable = true;
       cmake.enable = true;
       dockerls.enable = true;
@@ -231,7 +235,7 @@
     { key = ":"; action = "."; }
 
     { mode = "n"; key = "<leader>aa"; action = "<cmd>AerialToggle<CR>"; options.desc = "Toggles the Aerial view"; }
-  ] ++ lib.optionals pkgs.stdenv.isLinux [
+  ] ++ lib.optionals isLinux [
     # bépo remapped
     { key = "«"; action = "<"; }
     { key = "»"; action = ">"; }
