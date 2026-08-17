@@ -126,7 +126,6 @@ in
 
   programs.zsh = {
     enable = true;
-    enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     enableVteIntegration = true;
@@ -141,6 +140,13 @@ in
       findNoDups = true;
       expireDuplicatesFirst = true;
     };
+
+    plugins = [{
+      # zsh-autocomplete triggers asynchronously as I type, noneed for double-tab.
+      name = "zsh-autocomplete";
+      src = pkgs.zsh-autocomplete;
+      file = "share/zsh-autocomplete/zsh-autocomplete.plugin.zsh";
+    }];
   };
 
   programs.starship = {
