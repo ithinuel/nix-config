@@ -73,6 +73,7 @@ in
       users = [ "ithinuel" ];
       batteryNotifier.enable = true;
     };
+    sane.enable = true;
   };
   services = {
     hardware.openrgb.enable = true;
