@@ -14,6 +14,9 @@
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
 
+    gdb-dashboard.url = "github:cyrus-and/gdb-dashboard/v0.17.5";
+    gdb-dashboard.flake = false;
+
     # reduce duplication
     disko.inputs.nixpkgs.follows = "nixpkgs";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
@@ -73,6 +76,9 @@
           modules = [
             ./hosts/linux/${hostname}
           ];
+          specialArgs = {
+            inherit inputs;
+          };
         };
 
       mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration rec {

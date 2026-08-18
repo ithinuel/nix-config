@@ -219,6 +219,23 @@
         "type": "indirect"
       }
     },
+    "gdb-dashboard": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784281973,
+        "narHash": "sha256-q1oh/i7BWhycTK+2dZDDOTGHzMZuBKb9qrawmuyW2CU=",
+        "owner": "cyrus-and",
+        "repo": "gdb-dashboard",
+        "rev": "7b9b1260a8b3e9dd57b6cbf302bdfba71cec4014",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cyrus-and",
+        "ref": "v0.17.5",
+        "repo": "gdb-dashboard",
+        "type": "github"
+      }
+    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -534,6 +551,7 @@
     "root": {
       "inputs": {
         "disko": "disko",
+        "gdb-dashboard": "gdb-dashboard",
         "git-hooks": "git-hooks",
         "home-manager": "home-manager",
         "lanzaboote": "lanzaboote",

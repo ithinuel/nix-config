@@ -1,7 +1,10 @@
-_: _: super:
+inputs: _: super:
+let
+  callPackage = super.lib.callPackageWith ({ inherit inputs; } // super.pkgs);
+in
 super.lib.recursiveUpdate
   (super.lib.packagesFromDirectoryRecursive {
-    inherit (super.pkgs) callPackage;
+    inherit callPackage;
     directory = ./pkgs;
   })
 { }

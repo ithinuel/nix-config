@@ -87,7 +87,7 @@ in
 
       import os
 
-      gdb.execute('source ${pkgs.gdb-dashboard.outPath}/.gdbinit')
+      gdb.execute('source ${pkgs.gdb-dashboard}/.gdbinit')
 
       end
     '';
