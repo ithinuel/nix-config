@@ -67,6 +67,8 @@ in
   lib.optionals isLinux [
     usbutils
 
+    # GUI tools
+    gimp-with-plugins
     ghex
   ] ++
   lib.optional (isLinux && isx86_64) gcc_multi;
