@@ -153,7 +153,13 @@
 
       homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
-        modules = with homeProfiles; [ linux-desktop personal ];
+        modules = with homeProfiles; [
+          linux-desktop
+          personal
+          ({ pkgs, ... }: {
+            programs.btop.package = pkgs.btop-cuda;
+          })
+        ];
         specialArgs = {
           llm-agents = inputs.llm-agents.packages."x86_64-linux";
         };
