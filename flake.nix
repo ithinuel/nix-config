@@ -143,6 +143,7 @@
     // {
       inherit nixosModules;
       lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig homeProfiles; };
+      overlays.default = overlays;
       templates = {
         simple = {
           description = "Simple template with linting & formatting for nix’s file & a devShell";

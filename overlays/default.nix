@@ -1,6 +1,6 @@
-inputs: _: super:
+inputs: final: super:
 let
-  callPackage = super.lib.callPackageWith ({ inherit inputs; } // super.pkgs);
+  callPackage = final.lib.callPackageWith ({ inherit inputs; } // super.pkgs);
 in
 super.lib.recursiveUpdate
   (super.lib.packagesFromDirectoryRecursive {
