@@ -23,12 +23,10 @@ let
     gdt = "difftool -y";
     gf = "fetch";
     gfa = "fetch --all --recurse-submodules --prune";
-    gk = "gitk --all --branches --word-diff";
     gl = "pull";
     glog = "log --oneline --decorate --graph";
     gloga = "log --oneline --decorate --graph --all";
     gp = "push";
-    gpristine = "reset --hard && git clean --force -dfx -e .direnv -e .pre-commit-config.yaml";
     gr = "remote";
     gra = "remote add";
     grb = "rebase";
@@ -48,8 +46,6 @@ let
     gstp = "stash pop";
     gstu = "stash push --include-untracked";
     gts = "tag --sign";
-    gunwip = "rev-list --max-count=1 --format='%s' HEAD | grep -q '--wip--' && git reset HEAD~1";
-    gwip = "add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify --no-gpg-sign --message '--wip-- [skip ci]'";
   };
 
   mkGit = lib.mapAttrs (_: v: if v == "" then "git" else "git ${v}");
@@ -59,6 +55,10 @@ in
   du = "dust --reverse";
   fd = "fd -H";
   gg = "lazygit";
+  gk = "gitk --all --branches --word-diff";
+  gpristine = "git reset --hard && git clean --force -dfx -e .direnv -e .pre-commit-config.yaml";
+  gunwip = "git rev-list --max-count=1 --format='%s' HEAD | grep -q '--wip--' && git reset HEAD~1";
+  gwip = "git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify --no-gpg-sign --message '--wip-- [skip ci]'";
   hm = "home-manager";
   hme = "home-manager edit";
   hms = "home-manager switch";
