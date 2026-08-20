@@ -144,6 +144,8 @@ in
       expireDuplicatesFirst = true;
     };
 
+    defaultKeymap = "emacs";
+
     plugins = [{
       # zsh-autocomplete triggers asynchronously as I type, noneed for double-tab.
       name = "zsh-autocomplete";
