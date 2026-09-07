@@ -11,13 +11,17 @@ in
     opencode.settings = {
       subagent_depth = 0;
       provider = {
-
         "Ithinuel's AI" = {
           npm = "@ai-sdk/openai-compatible";
           options.baseURL = "https://ollama.home.ithinuel.me/v1";
           models = {
+            "gemma4:26b" = { };
             "gemma4:12b" = { };
             "qwen3.5:9b" = { };
+            "qwen3.8:27b" = { };
+            "hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:Q4_K_M" = { };
+            "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ4_XS" = { };
+            "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-Q2_K_XL" = { };
           };
         };
       };
