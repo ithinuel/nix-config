@@ -9,19 +9,28 @@ in
     element-desktop.enable = true;
     prismlauncher.enable = true;
     opencode.settings = {
-      subagent_depth = 0;
+      mcp = {
+        obsidian = {
+          enabled = true;
+          type = "remote";
+          url = "http://127.0.0.1:27124/mcp/";
+          headers = {
+            Authorization = "Bearer 853083c1b30d9425a665c34aaa037173db431e41a4114f336243ab6e03844264";
+          };
+        };
+      };
+      enabled_providers = [ "Ithinuel's AI" "github-copilot" ];
       provider = {
         "Ithinuel's AI" = {
           npm = "@ai-sdk/openai-compatible";
-          options.baseURL = "https://ollama.home.ithinuel.me/v1";
+          options.baseURL = "https://llm.home.ithinuel.me/v1";
           models = {
-            "gemma4:26b" = { };
-            "gemma4:12b" = { };
-            "qwen3.5:9b" = { };
-            "qwen3.8:27b" = { };
-            "hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:Q4_K_M" = { };
-            "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ4_XS" = { };
-            "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-Q2_K_XL" = { };
+            "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:Q4_K_XL" = {
+              options = {
+                reasoningEffort = "high";
+              };
+            };
+            "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL" = { };
           };
         };
       };
@@ -30,8 +39,8 @@ in
   home.packages = [
     pkgs.slack
     pkgs.homebank
+    pkgs.telegram-desktop
     llm-agents.copilot-cli
-    llm-agents.mistral-vibe
   ] ++ lib.optionals isLinux [
     pkgs.vlc
     pkgs.siril

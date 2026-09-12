@@ -3,10 +3,7 @@ let
   inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux isx86_64;
   userBase = if isDarwin then "Users" else "home";
   homeDirectory = "/${userBase}/${username}";
-  unstable_pkgs = import inputs.nixpkgs-unstable {
-    inherit (pkgs) config;
-    inherit (pkgs.stdenv.hostPlatform) system;
-  };
+  inherit (pkgs.stdenv.hostPlatform) system;
 in
 {
   sops.age.keyFile = homeDirectory + "/.config/sops/age/keys.txt";
@@ -154,6 +151,10 @@ in
         background-opacity = 0.95;
         background-blur-radius = 20;
         shell-integration-features = "ssh-terminfo,ssh-env";
+        keybind = [
+          "ctrl+shift+left=unbind"
+          "ctrl+shift+right=unbind"
+        ];
       };
     };
     git = {
@@ -209,7 +210,7 @@ in
     nixvim = import ../nixvim.nix { inherit pkgs lib; };
     opencode = {
       enable = true;
-      package = unstable_pkgs.opencode;
+      package = inputs.llm-agents.packages.${system}.opencode2;
     };
     ripgrep = {
       enable = true;
@@ -366,6 +367,10 @@ in
         hme = "home-manager edit";
         hms = "home-manager switch";
         hm = "home-manager";
+
+        oc = "opencode2";
+        occ = "opencode2 -c";
+        opencode = "opencode";
       };
 
       history = {

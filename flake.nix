@@ -14,6 +14,7 @@
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     sops-nix.url = "github:mic92/sops-nix";
     utils.url = "github:numtide/flake-utils";
+    treefmt.url = "github:numtide/treefmt-nix";
 
     gdb-dashboard.url = "github:cyrus-and/gdb-dashboard/v0.17.5";
     gdb-dashboard.flake = false;
