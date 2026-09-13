@@ -26,6 +26,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    treefmt.inputs.nixpkgs.follows = "nixpkgs";
     # llm-agents use its own nixpkgs for compatibility.
   };
 
@@ -103,24 +104,51 @@
     (utils.lib.eachDefaultSystem (system:
       let pkgs = mkPkgs { inherit system; }; in rec {
         inherit overlays;
-        formatter = pkgs.nixpkgs-fmt;
+        formatter = inputs.treefmt.lib.mkWrapper pkgs {
+          projectRootFile = "flake.nix";
+          programs.nixpkgs-fmt.enable = true;
+        };
         checks = {
           pre-commit-check = inputs.git-hooks.lib.${system}.run {
             src = ./.;
-            hooks = {
-              deadnix.enable = true;
-              nixpkgs-fmt.enable = true;
-              statix.enable = true;
-              convco.enable = true;
-              gitlint.enable = true;
-              markdownlint.enable = true;
-              markdownlint.settings.configuration = {
-                MD013 = {
-                  line_length = 100;
-                  code_blocks = false;
+            hooks =
+              let
+                skip_wip = ''
+                  msg=$(head -n 1 "$1")
+                  if [[ "$msg" =~ ^(--wip--|fixup) ]]; then
+                    exit 0
+                  fi
+                '';
+                inherit (pkgs) lib;
+              in
+              {
+                # Nix
+                convco = {
+                  enable = true;
+                  entry = "${pkgs.writeShellScript "convco-skip-wip" ''
+                    ${skip_wip}
+                    cat "$1" | ${lib.getExe pkgs.convco} check --from-stdin
+                  ''}";
+                };
+                gitlint = {
+                  enable = true;
+                  entry = "${pkgs.writeShellScript "gitlint-skip-wip" ''
+                  ${skip_wip}
+                  ${pkgs.lib.getExe pkgs.gitlint} --staged --ignore WIP --msg-filename $1
+                ''}";
+                };
+
+                deadnix.enable = true;
+                nixpkgs-fmt.enable = true;
+                statix.enable = true;
+                markdownlint.enable = true;
+                markdownlint.settings.configuration = {
+                  MD013 = {
+                    line_length = 100;
+                    code_blocks = false;
+                  };
                 };
               };
-            };
           };
         };
         packages = rec {
@@ -167,7 +195,17 @@
       homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" {
         system = "aarch64-darwin";
       }).extendModules {
-        modules = with homeProfiles; [ macos-desktop personal ];
+        modules = with homeProfiles; [
+          macos-desktop
+          personal
+          {
+            programs.ssh = {
+              enable = true;
+              enableDefaultConfig = false;
+              settings.tleilax.ForwardAgent = "yes";
+            };
+          }
+        ];
       };
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
