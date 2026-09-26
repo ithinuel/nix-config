@@ -167,6 +167,6 @@ in
 
   virtualisation.virtualbox.host.enable = true;
 
-  security.pki.certificateFiles = [ (pathRoot + "/certs/ithinuel.local.crt") ];
+  security.pki.certificateFiles = [ (pathRoot + "/certs/home.ca.pem") ];
   desktop.enable = true;
 }
