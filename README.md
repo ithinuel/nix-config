@@ -2,7 +2,6 @@
 
 ## Supported hosts
 
-- `nixbox`: NixOS in VirtualBox on x86_64
 - `tleilax`: NixOS desktop on x86_64
 - `ithinuel-air`: macBook Air M1
 

@@ -149,7 +149,6 @@
         };
       };
 
-      homeConfigurations."ithinuel@nixbox" = mkHomeManagerConfig "ithinuel" "x86_64-linux";
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
         modules = with homeProfiles; [
           linux-desktop
@@ -171,7 +170,6 @@
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
 
-      nixosConfigurations.nixbox = mkNixosSystem "ithinuel" "nixbox";
       nixosConfigurations.tleilax = mkNixosSystem "ithinuel" "tleilax";
     };
 }
