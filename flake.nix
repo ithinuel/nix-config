@@ -191,13 +191,14 @@
         system = "x86_64-linux";
         config = { cudaSupport = true; };
       }).extendModules {
-        modules = with homeProfiles; [ linux-desktop personal ];
+        modules = with homeProfiles; [ linux-desktop personal-desktop personal ];
       };
       homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" {
         system = "aarch64-darwin";
       }).extendModules {
         modules = with homeProfiles; [
           macos-desktop
+          personal-desktop
           personal
           {
             programs.ssh = {
