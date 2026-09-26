@@ -160,6 +160,7 @@
 
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" {
         system = "x86_64-linux";
+        config = { cudaSupport = true; };
       }).extendModules {
         modules = with homeProfiles; [ linux-desktop personal ];
       };

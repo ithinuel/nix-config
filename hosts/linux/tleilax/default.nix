@@ -12,14 +12,26 @@ in
       modesetting.enable = true; # requis pour Wayland
       powerManagement.enable = true; # recommandé
     };
+    nvidia-container-toolkit.enable = true;
     bluetooth.settings.General.Experimental = true;
     saleae-logic.enable = true;
     openrazer = {
       enable = true;
-      users = [ "ithinuel" ];
       batteryNotifier.enable = true;
     };
-    sane.enable = true;
+    sane = {
+      enable = true;
+      extraBackends = [ pkgs.sane-airscan ];
+    };
+  };
+  nixpkgs.config.cudaSupport = true;
+  users.users.ithinuel = {
+    linger = true;
+    extraGroups = [
+      "scanner"
+      "lp"
+      "openrazer"
+    ];
   };
   services = {
     hardware.openrgb.enable = true;
@@ -79,11 +91,17 @@ in
     format = "binary";
     mode = "0400";
   };
-  nix.settings.secret-key-files = config.sops.secrets.store-key.path;
-  nix.settings.trusted-public-keys = [
-    "tleilax-1:TnLV90m+UmVwKCmz2rqH/ED78OrHFQZ79fnKGHQfGdw="
-    "nixbox-1:+RhEM+GSeQmbFCaadAv6fQiuWzAF6f1FW4yuFhfHmYI="
-  ];
+  nix.settings = {
+    secret-key-files = config.sops.secrets.store-key.path;
+    substituters = [
+      "https://cache.nixos-cuda.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+      "tleilax-1:TnLV90m+UmVwKCmz2rqH/ED78OrHFQZ79fnKGHQfGdw="
+      "nixbox-1:+RhEM+GSeQmbFCaadAv6fQiuWzAF6f1FW4yuFhfHmYI="
+    ];
+  };
 
   programs = {
     ghidra = {
@@ -102,13 +120,8 @@ in
     coolercontrol.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    (blender.override {
-      config = {
-        cudaSupport = true;
-        rocmSupport = false;
-      };
-    })
+  environment.systemPackages = [
+    pkgs.blender
   ];
 
   virtualisation.virtualbox.host.enable = true;
