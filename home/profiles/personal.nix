@@ -1,6 +1,7 @@
-{ pkgs, lib, llm-agents ? { }, ... }:
+{ pkgs, lib, inputs, ... }:
 let
-  inherit (pkgs.stdenv.hostPlatform) isLinux;
+  inherit (pkgs.stdenv.hostPlatform) isLinux system;
+  llm-agents = inputs.llm-agents.packages.${system};
 in
 {
   programs = {

@@ -32,7 +32,14 @@
   outputs = { self, utils, home-manager, nix-darwin, nixpkgs, sops-nix, ... }@inputs:
     let
       overlays = import ./overlays inputs;
-      mkPkgs = system: import nixpkgs { inherit system; overlays = [ overlays ]; config.allowUnfree = true; };
+      mkPkgs =
+        { system
+        , config ? { }
+        }: import nixpkgs {
+          inherit system;
+          overlays = [ overlays ];
+          config = config // { allowUnfree = true; };
+        };
       pathRoot = ./.;
       homeProfiles = {
         linux-desktop = ./home/profiles/linux-desktop.nix;
@@ -79,8 +86,8 @@
           ];
         };
 
-      mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration rec {
-        pkgs = mkPkgs system;
+      mkHomeManagerConfig = username: config: home-manager.lib.homeManagerConfiguration rec {
+        pkgs = mkPkgs config;
         modules = [
           sops-nix.homeManagerModules.sops
           inputs.nixvim.homeModules.nixvim
@@ -94,7 +101,7 @@
       };
     in
     (utils.lib.eachDefaultSystem (system:
-      let pkgs = mkPkgs system; in rec {
+      let pkgs = mkPkgs { inherit system; }; in rec {
         inherit overlays;
         formatter = pkgs.nixpkgs-fmt;
         checks = {
@@ -116,21 +123,23 @@
             };
           };
         };
-        packages.default = packages.install-from-live;
-        packages.install-from-live = pkgs.writeShellApplication {
-          name = "install-from-live";
-          text = ''
-            diskoArgs="-m mount"
-            if [[ "$1" == "-f" ]]; then
-              shift
-              diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
-            fi
-            [ -z "$1" ] && { echo "Usage..."; exit 1; }
-            nix run --experimental-features 'nix-command flakes' ${inputs.disko}#disko -- \
-              -f "${self}#$1" "''${diskoArgs}"
-            nixos-install --flake "${self}#$1" --no-root-password --no-channel-copy
-          '';
-          meta = { description = "NixOS installation script"; };
+        packages = rec {
+          default = install-from-live;
+          install-from-live = pkgs.writeShellApplication {
+            name = "install-from-live";
+            text = ''
+              diskoArgs="-m mount"
+              if [[ "$1" == "-f" ]]; then
+                shift
+                diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
+              fi
+              [ -z "$1" ] && { echo "Usage..."; exit 1; }
+              nix run --experimental-features 'nix-command flakes' ${inputs.disko}#disko -- \
+                -f "${self}#$1" "''${diskoArgs}"
+              nixos-install --flake "${self}#$1" --no-root-password --no-channel-copy
+            '';
+            meta = { description = "NixOS installation script"; };
+          };
         };
 
         devShells.default = pkgs.mkShell {
@@ -149,23 +158,15 @@
         };
       };
 
-      homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
-        modules = with homeProfiles; [
-          linux-desktop
-          personal
-          ({ pkgs, ... }: {
-            programs.btop.package = pkgs.btop-cuda;
-          })
-        ];
-        specialArgs = {
-          llm-agents = inputs.llm-agents.packages."x86_64-linux";
-        };
+      homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" {
+        system = "x86_64-linux";
+      }).extendModules {
+        modules = with homeProfiles; [ linux-desktop personal ];
       };
-      homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" "aarch64-darwin").extendModules {
+      homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" {
+        system = "aarch64-darwin";
+      }).extendModules {
         modules = with homeProfiles; [ macos-desktop personal ];
-        specialArgs = {
-          llm-agents = inputs.llm-agents.packages."aarch64-darwin";
-        };
       };
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
