@@ -187,6 +187,11 @@
         };
       };
 
+      homeConfigurations."ithinuel@ix" = (mkHomeManagerConfig "ithinuel" {
+        system = "x86_64-linux";
+      }).extendModules {
+        modules = [ homeProfiles.personal ];
+      };
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" {
         system = "x86_64-linux";
         config = { cudaSupport = true; };
@@ -213,5 +218,6 @@
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
 
       nixosConfigurations.tleilax = mkNixosSystem "ithinuel" "tleilax";
+      nixosConfigurations.ix = mkNixosSystem "ithinuel" "ix";
     };
 }

@@ -2,7 +2,8 @@
 
 ## Supported hosts
 
-- `tleilax`: NixOS desktop on x86_64
+- `tleilax`: NixOS desktop on x86_64 (NVIDIA/CUDA)
+- `ix`: NixOS inference workstation on x86_64 (AMD Strix Halo / ROCm)
 - `ithinuel-air`: macBook Air M1
 
 ## Overview of Repository Structure
