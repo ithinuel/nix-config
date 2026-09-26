@@ -163,8 +163,9 @@
                 diskoArgs="-m destroy,format,mount --yes-wipe-all-disks"
               fi
               [ -z "$1" ] && { echo "Usage..."; exit 1; }
+              # shellcheck disable=SC2086
               nix run --experimental-features 'nix-command flakes' ${inputs.disko}#disko -- \
-                -f "${self}#$1" "''${diskoArgs}"
+                -f "${self}#$1" ''${diskoArgs}
               nixos-install --flake "${self}#$1" --no-root-password --no-channel-copy
             '';
             meta = { description = "NixOS installation script"; };
