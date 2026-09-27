@@ -16,6 +16,9 @@
     utils.url = "github:numtide/flake-utils";
     treefmt.url = "github:numtide/treefmt-nix";
 
+    llama-cpp-28233.url = "https://patch-diff.githubusercontent.com/raw/ggml-org/llama.cpp/pull/28233.patch";
+    llama-cpp-28233.flake = false;
+
     gdb-dashboard.url = "github:cyrus-and/gdb-dashboard/v0.17.5";
     gdb-dashboard.flake = false;
 

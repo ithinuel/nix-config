@@ -128,10 +128,7 @@ in
     # llama-cpp — ROCm backend (auto-detected on AMD)
     llama-cpp =
       let
-        mmproj-size-counted-twice = pkgs.fetchurl {
-          url = "https://patch-diff.githubusercontent.com/raw/ggml-org/llama.cpp/pull/28233.patch";
-          hash = "sha256-08nm4/3C/NHGx669A5Ooz125f3XEIEcyhIOgZQSwGMk=";
-        };
+        mmproj-size-counted-twice = inputs.llama-cpp-28233;
       in
       {
         enable = true;
@@ -200,7 +197,7 @@ in
 
     # Docling Serve — document parsing / OCR
     docling-serve = {
-      enable = true;
+      enable = false;
       package = unstable_pkgs.docling-serve.override {
         withUI = true;
         withRapidocr = false;
@@ -215,7 +212,7 @@ in
 
     # ComfyUI — stable diffusion / image generation (ROCm)
     comfyui = {
-      enable = true;
+      enable = false;
       package = unstable_pkgs.comfyui;
     };
 
@@ -292,5 +289,8 @@ in
     pkgs.rocmPackages.rocm-smi
   ];
 
-  security.pki.certificateFiles = [ (pathRoot + "/certs/home.ca.pem") ];
+  security = {
+    pki.certificateFiles = [ (pathRoot + "/certs/home.ca.pem") ];
+    sudo.wheelNeedsPassword = false;
+  };
 }
