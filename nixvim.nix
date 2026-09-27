@@ -83,7 +83,6 @@ in
       };
     };
     bufferline.enable = true;
-    copilot-lua.enable = true;
     dap.enable = true;
     dap-ui.enable = true;
     dap-virtual-text.enable = true;
@@ -159,7 +158,6 @@ in
           "nvim_lsp"
           "cmp-clippy"
           "conventionalcommits"
-          "copilot"
           "emoji"
           "git"
           "path"
