@@ -49,7 +49,7 @@ in
     obsidian
     (if isDarwin then vlc-bin else vlc)
     (if isDarwin then libreoffice-bin else libreoffice)
-    (if isDarwin then firefox-bin else firefox)
+    firefox-bin
     wireshark
 
     # Rust accelerated cli tools
