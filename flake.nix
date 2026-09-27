@@ -46,7 +46,9 @@
       homeProfiles = {
         linux-desktop = ./home/profiles/linux-desktop.nix;
         macos-desktop = ./home/profiles/macos-desktop.nix;
+        personal-desktop = ./home/profiles/personal-desktop.nix;
         personal = ./home/profiles/personal.nix;
+        base-desktop = ./home/base-deskstop.nix;
       };
       nixosModules.desktop = ./modules/desktop.nix;
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
@@ -197,7 +199,11 @@
         system = "x86_64-linux";
         config = { cudaSupport = true; };
       }).extendModules {
-        modules = with homeProfiles; [ linux-desktop personal-desktop personal ];
+        modules = with homeProfiles; [
+          linux-desktop
+          personal-desktop
+          personal
+        ];
       };
       homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" {
         system = "aarch64-darwin";
