@@ -132,6 +132,7 @@ in
   };
 
   environment.systemPackages = [
+    pkgs.sbctl
     pkgs.blender
   ];
 

@@ -2,6 +2,7 @@
 {
   disko.devices.disk = lib.genAttrs' [
     { name = "nvme0"; boot = "0"; device = "nvme-KINGSTON_OM8TAP42048K1-A00_50026B73845011D3"; }
+    { name = "nvme1"; boot = "1"; device = "nvme-WD_Green_SN3000_2TB_260449802917"; }
   ]
     ({ name, boot, device }: lib.nameValuePair "${name}" {
       type = "disk";
@@ -34,6 +35,7 @@
     raid-root = {
       type = "mdadm";
       level = 1;
+      extraArgs = [ "--bitmap=internal" ];
       content = {
         type = "luks";
         name = "luks-root";

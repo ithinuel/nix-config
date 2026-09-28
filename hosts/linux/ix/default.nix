@@ -66,6 +66,8 @@ in
 
   # ── Boot / Secure Boot ───────────────────────────────────────
   boot = {
+    kernelPackages = pkgs.linuxPackages_7_2;
+
     # Headless: log mdadm events to syslog.
     swraid.mdadmConf = ''
       PROGRAM ${mdadmNotify}/bin/mdadm-notify
@@ -93,12 +95,20 @@ in
     lanzaboote = {
       enable = true;
       pkiBundle = "/var/lib/sbctl";
-      configurationLimit = 5;
-      #extraEfiSysMountPoints = [ "/boot1" ]; # Not available yet
+      configurationLimit = 4;
+      extraEfiSysMountPoints = [ "/boot1" ];
       autoGenerateKeys.enable = true;
       autoEnrollKeys = {
         enable = true;
         autoReboot = true;
+      };
+      measuredBoot = {
+        enable = true;
+        pcrs = [ 0 4 7 ];
+        autoCryptenroll = {
+          enable = true;
+          device = "/dev/md/raid-root";
+        };
       };
     };
 
@@ -290,7 +300,8 @@ in
   ];
 
   security = {
-    pki.certificateFiles = [ (pathRoot + "/certs/home.ca.pem") ];
+    pki.certificateFiles = [ "${pathRoot}/certs/home.ca.pem" ];
     sudo.wheelNeedsPassword = false;
+    tpm2.enable = true;
   };
 }

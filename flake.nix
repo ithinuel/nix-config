@@ -5,7 +5,7 @@
     disko.url = "github:nix-community/disko/master";
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
-    lanzaboote.url = "github:nix-community/lanzaboote/v1.0.0";
+    lanzaboote.url = "github:nix-community/lanzaboote/v1.2.0";
     llm-agents.url = "github:numtide/llm-agents.nix";
     mac-app-util.url = "github:ithinuel/mac-app-util/fix/missing-icons";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
@@ -195,6 +195,7 @@
 
       homeConfigurations."ithinuel@ix" = (mkHomeManagerConfig "ithinuel" {
         system = "x86_64-linux";
+        config = { rocmSupport = true; };
       }).extendModules {
         modules = [ homeProfiles.personal ];
       };
