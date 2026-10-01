@@ -145,65 +145,7 @@ in
         package = unstable_pkgs.llama-cpp.overrideAttrs (oldAttrs: {
           patches = oldAttrs.patches ++ [ mmproj-size-counted-twice ];
         });
-        extraFlags = [ "--models-max" "1" "--sleep-idle-seconds" "300" ];
-        modelsPreset = {
-          "unsloth/Qwen3.5-9B-GGUF:Q4_K_XL" = {
-            hf-repo = "unsloth/Qwen3.5-9B-GGUF:Q4_K_XL";
-            temperature = 0.6;
-            top-p = 0.95;
-            top-k = 20;
-            min-p = 0.0;
-            presence-penalty = 0.0;
-            repeat-penalty = 1.0;
-          };
-          "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:UD-Q4_K_XL" = {
-            hf-repo = "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:UD-Q4_K_XL";
-            temperature = 0.6;
-            top-p = 0.95;
-            top-k = 20;
-            min-p = 0.0;
-            presence-penalty = 0.0;
-            repeat-penalty = 1.0;
-            flash-attn = "on";
-            cache-type-k = "q8_0";
-            cache-type-v = "q8_0";
-            ctx-size = 256 * 1024;
-          };
-          "unsloth/Qwen3.8-27B-GGUF:UD-Q2_K_XL" = {
-            hf-repo = "unsloth/Qwen3.8-27B-GGUF:UD-Q2_K_XL";
-            temp = 1.0;
-            top-p = 0.95;
-            top-k = 20;
-            min-p = 0;
-            presence-penalty = 0.0;
-            repeat-penalty = 1.0;
-            ctx-size = 128 * 1024;
-          };
-          "unsloth/gemma-4-12b-it-GGUF:Q4_K_XL" = {
-            hf-repo = "unsloth/gemma-4-12b-it-GGUF:Q4_K_XL";
-            temp = 1.0;
-            top-p = 0.95;
-            top-k = 64;
-          };
-          "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL" = {
-            hf-repo = "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL";
-            spec-type = "draft-mtp";
-            spec-draft-n-max = 2;
-            temp = 1.0;
-            top-p = 0.95;
-            top-k = 64;
-            ctx-size = 256 * 1024;
-          };
-          "PaddlePaddle/PaddleOCR-VL-1.6-GGUF" = {
-            hf-repo = "PaddlePaddle/PaddleOCR-VL-1.6-GGUF";
-            temp = 0;
-          };
-          "zai-org/GLM-OCR" = {
-            hf-repo = "zai-org/GLM-OCR";
-            temp = 0;
-          };
-        };
-      };
+      } // (import ./llama-cpp-config.nix);
 
     # Docling Serve — document parsing / OCR
     docling-serve = {
