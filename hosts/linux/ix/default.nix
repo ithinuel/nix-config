@@ -239,6 +239,7 @@ in
     # ROCm observability
     pkgs.rocmPackages.rocminfo
     pkgs.rocmPackages.rocm-smi
+    pkgs.python3Packages.amdsmi
   ];
 
   security = {

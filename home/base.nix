@@ -44,14 +44,6 @@ in
     gdb
     gdb-dashboard
 
-    # gui tools
-    meld
-    obsidian
-    (if isDarwin then vlc-bin else vlc)
-    (if isDarwin then libreoffice-bin else libreoffice)
-    firefox
-    wireshark
-
     # Rust accelerated cli tools
     bacon
     cargo-watch
@@ -62,16 +54,6 @@ in
     nix-tree
     nix-diff
     nvd
-
-    # custom packages
-    awthemes
-  ] ++
-  lib.optionals isLinux [
-    usbutils
-
-    # GUI tools
-    gimp-with-plugins
-    ghex
   ] ++
   lib.optional (isLinux && isx86_64) gcc_multi;
 
@@ -101,23 +83,7 @@ in
     !.github
   '';
 
-  home.sessionVariables = {
-    LESS = if isDarwin then "--mouse" else "";
-    TCLLIBPATH = "${pkgs.awthemes}";
-  };
-
-  xdg.mimeApps = lib.attrsets.optionalAttrs isLinux {
-    enable = true;
-    defaultApplications = {
-      "x-scheme-handler/http" = [ "firefox.desktop" ];
-      "x-scheme-handler/https" = [ "firefox.desktop" ];
-      "text/plain" = [ "org.gnome.TextEditor.desktop" ];
-      "text/html" = [ "firefox.desktop" ];
-      "application/pdf" = [ "evince.desktop" "firefox.desktop" ];
-    };
-  };
-
-
+  home.sessionVariables.LESS = if isDarwin then "--mouse" else "";
 
   programs = {
     btop.enable = true;

@@ -50,8 +50,8 @@
         linux-desktop = ./home/profiles/linux-desktop.nix;
         macos-desktop = ./home/profiles/macos-desktop.nix;
         personal-desktop = ./home/profiles/personal-desktop.nix;
+        base-desktop = ./home/profiles/base-desktop.nix;
         personal = ./home/profiles/personal.nix;
-        base-desktop = ./home/base-deskstop.nix;
       };
       nixosModules.desktop = ./modules/desktop.nix;
       mkDarwinBaseSystem = username: hostname: nix-darwin.lib.darwinSystem {
@@ -204,6 +204,7 @@
         config = { cudaSupport = true; };
       }).extendModules {
         modules = with homeProfiles; [
+          base-desktop
           linux-desktop
           personal-desktop
           personal
@@ -213,6 +214,7 @@
         system = "aarch64-darwin";
       }).extendModules {
         modules = with homeProfiles; [
+          base-desktop
           macos-desktop
           personal-desktop
           personal
