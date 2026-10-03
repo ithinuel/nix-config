@@ -9,11 +9,15 @@ let
     inherit (pkgs) config;
     inherit (pkgs.stdenv.hostPlatform) system;
   };
+
+  # Forgejo runner Docker image: Nix + Node.js (for JS actions like actions/checkout@v4)
+  nix-node-image = import ./nix-node-image.nix { inherit pathRoot pkgs; };
 in
 {
   imports = [
     ./disk.nix
     "${inputs.nixpkgs-unstable}/nixos/modules/services/misc/comfyui.nix"
+    "${inputs.nixpkgs-unstable}/nixos/modules/services/continuous-integration/forgejo-runner.nix"
   ];
 
   # ── Platform ─────────────────────────────────────────────────
@@ -117,6 +121,39 @@ in
       emulatedSystems = [ "aarch64-linux" ];
       preferStaticEmulators = false;
     };
+  };
+
+  # ── Forgejo runner ———————────────────────────────────────────
+
+  services.forgejo-runner.instances.default = {
+    enable = true;
+    settings = {
+      runner.labels = [
+        "nix-flakes:docker://nix-node:latest"
+      ];
+      server.connections.default = {
+        url = "https://forgejo.home.ithinuel.me/";
+        uuid = "401b2c41-4c9f-4439-8a82-e470ada94e09";
+      };
+    };
+    secrets.server.connections.default.token_url = config.sops.secrets.forgejo-runner.path;
+  };
+  virtualisation.docker = {
+    enable = true;
+    autoPrune.enable = true;
+  };
+
+  # Load the Nix+Node.js image into Docker so the runner can find it
+  systemd.services.load-nix-node-image = {
+    description = "Load nix-node Docker image for Forgejo runner";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "docker.service" ];
+    requires = [ "docker.service" ];
+    serviceConfig.Type = "oneshot";
+    serviceConfig.Restart = "on-failure";
+    script = ''
+      ${pkgs.docker}/bin/docker load -i ${nix-node-image}
+    '';
   };
 
   # ── SSH (headless access) ────────────────────────────────────
@@ -228,6 +265,11 @@ in
       sopsFile = pathRoot + "/secrets/ix.comfyui.cert-key.sops";
       format = "binary";
       owner = config.services.caddy.user;
+    };
+    forgejo-runner = {
+      sopsFile = pathRoot + "/secrets/ix.forgejo.secrets.enc.yaml";
+      format = "yaml";
+      key = "token";
     };
   };
   nix.settings.trusted-public-keys = [

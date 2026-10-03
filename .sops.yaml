@@ -9,7 +9,7 @@ creation_rules:
   - path_regex: secrets/tleilax\..*\.sops
     pgp: *at_ithinuel
     age: *tleilax
-  - path_regex: secrets/ix\..*\.sops
+  - path_regex: secrets/ix\..*\.(sops|enc\.yaml)
     pgp: *at_ithinuel
     age: *ix
   - path_regex: secrets/allowed_signers.sops
