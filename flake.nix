@@ -37,14 +37,6 @@
   outputs = { self, utils, home-manager, nix-darwin, nixpkgs, sops-nix, ... }@inputs:
     let
       overlays = import ./overlays inputs;
-      mkPkgs =
-        { system
-        , config ? { }
-        }: import nixpkgs {
-          inherit system;
-          overlays = [ overlays ];
-          config = config // { allowUnfree = true; };
-        };
       pathRoot = ./.;
       homeProfiles = {
         linux-desktop = ./home/profiles/linux-desktop.nix;
@@ -93,9 +85,13 @@
           ];
         };
 
-      mkHomeManagerConfig = username: config: home-manager.lib.homeManagerConfiguration rec {
-        pkgs = mkPkgs config;
+      mkHomeManagerConfig = username: system: home-manager.lib.homeManagerConfiguration rec {
+        pkgs = nixpkgs.legacyPackages.${system};
         modules = [
+          {
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [ overlays ];
+          }
           sops-nix.homeManagerModules.sops
           inputs.nixvim.homeModules.nixvim
           ./home/base.nix
@@ -108,7 +104,17 @@
       };
     in
     (utils.lib.eachDefaultSystem (system:
-      let pkgs = mkPkgs { inherit system; }; in rec {
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        skip_wip = ''
+          msg=$(head -n 1 "$1")
+          if [[ "$msg" =~ ^(--wip--|fixup) ]]; then
+            exit 0
+          fi
+        '';
+        inherit (pkgs) lib;
+      in
+      rec {
         inherit overlays;
         formatter = inputs.treefmt.lib.mkWrapper pkgs {
           projectRootFile = "flake.nix";
@@ -117,44 +123,34 @@
         checks = {
           pre-commit-check = inputs.git-hooks.lib.${system}.run {
             src = ./.;
-            hooks =
-              let
-                skip_wip = ''
-                  msg=$(head -n 1 "$1")
-                  if [[ "$msg" =~ ^(--wip--|fixup) ]]; then
-                    exit 0
-                  fi
-                '';
-                inherit (pkgs) lib;
-              in
-              {
-                # Nix
-                convco = {
-                  enable = true;
-                  entry = "${pkgs.writeShellScript "convco-skip-wip" ''
-                    ${skip_wip}
-                    cat "$1" | ${lib.getExe pkgs.convco} check --from-stdin
-                  ''}";
-                };
-                gitlint = {
-                  enable = true;
-                  entry = "${pkgs.writeShellScript "gitlint-skip-wip" ''
+            hooks = {
+              # Nix
+              convco = {
+                enable = true;
+                entry = "${pkgs.writeShellScript "convco-skip-wip" ''
+                  ${skip_wip}
+                  cat "$1" | ${lib.getExe pkgs.convco} check --from-stdin
+                ''}";
+              };
+              gitlint = {
+                enable = true;
+                entry = "${pkgs.writeShellScript "gitlint-skip-wip" ''
                   ${skip_wip}
                   ${pkgs.lib.getExe pkgs.gitlint} --staged --ignore WIP --msg-filename $1
                 ''}";
-                };
+              };
 
-                deadnix.enable = true;
-                nixpkgs-fmt.enable = true;
-                statix.enable = true;
-                markdownlint.enable = true;
-                markdownlint.settings.configuration = {
-                  MD013 = {
-                    line_length = 100;
-                    code_blocks = false;
-                  };
+              deadnix.enable = true;
+              nixpkgs-fmt.enable = true;
+              statix.enable = true;
+              markdownlint = {
+                enable = true;
+                settings.configuration.MD013 = {
+                  line_length = 100;
+                  code_blocks = false;
                 };
               };
+            };
           };
         };
         packages = rec {
@@ -193,31 +189,29 @@
         };
       };
 
-      homeConfigurations."ithinuel@ix" = (mkHomeManagerConfig "ithinuel" {
-        system = "x86_64-linux";
-        config = { rocmSupport = true; };
-      }).extendModules {
-        modules = [ homeProfiles.personal ];
+      homeConfigurations."ithinuel@ix" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
+        modules = [
+          { nixpkgs.config = { rocmSupport = true; }; }
+          homeProfiles.personal
+        ];
       };
-      homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" {
-        system = "x86_64-linux";
-        config = { cudaSupport = true; };
-      }).extendModules {
-        modules = with homeProfiles; [
+      homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
+        modules = [
+          { nixpkgs.config = { cudaSupport = true; }; }
+        ] ++ (with homeProfiles; [
           base-desktop
           linux-desktop
           personal-desktop
           personal
-        ];
+        ]);
       };
-      homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" {
-        system = "aarch64-darwin";
-      }).extendModules {
-        modules = with homeProfiles; [
+      homeConfigurations."ithinuel@ithinuel-air" = (mkHomeManagerConfig "ithinuel" "aarch64-darwin").extendModules {
+        modules = (with homeProfiles; [
           base-desktop
           macos-desktop
           personal-desktop
           personal
+        ]) ++ [
           {
             programs.ssh = {
               enable = true;
