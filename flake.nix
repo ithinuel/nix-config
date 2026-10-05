@@ -103,7 +103,7 @@
         };
       };
     in
-    (utils.lib.eachDefaultSystem (system:
+    (utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ] (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         skip_wip = ''
