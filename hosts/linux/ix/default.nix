@@ -53,7 +53,8 @@ in
     # plugdev, dialout, scanner, lp, openrazer).
     extraGroups = [ "video" "render" ];
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHsXFtkro93/Ff2HtYetypL9YSi1575Q8CrDJ/xK9Yi6 ithinuel"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHsXFtkro93/Ff2HtYetypL9YSi1575Q8CrDJ/xK9Yi6 ithinuel@tleilax"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKoClo3Pe8KKa+hpWmMvuYYR13ctiDqvvpTOOatx17UF ithinuel@ithinuel-air"
     ];
   };
 
