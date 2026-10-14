@@ -185,21 +185,6 @@ in
         });
       } // (import ./llama-cpp-config.nix);
 
-    # Docling Serve — document parsing / OCR
-    docling-serve = {
-      enable = false;
-      package = unstable_pkgs.docling-serve.override {
-        withUI = true;
-        withRapidocr = false;
-        withTesserocr = false;
-      };
-      environment = {
-        DOCLING_NUM_THREADS = "20";
-        DOCLING_SERVE_OTEL_ENABLE_METRICS = "False";
-        DOCLING_SERVE_OTEL_ENABLE_PROMETHEUS = "False";
-      };
-    };
-
     # ComfyUI — stable diffusion / image generation (ROCm)
     comfyui = {
       enable = false;
@@ -211,12 +196,6 @@ in
       enable = true;
       openFirewall = true;
       virtualHosts = {
-        "docling.home.ithinuel.me" = {
-          extraConfig = ''
-            tls ${pathRoot + "/certs/docling.pem"} ${config.sops.secrets.docling-key.path}
-            reverse_proxy localhost:5001
-          '';
-        };
         "llm.home.ithinuel.me" = {
           extraConfig = ''
             tls ${pathRoot + "/certs/llm.pem"} ${config.sops.secrets.llm-key.path}
@@ -235,16 +214,6 @@ in
     };
   };
 
-  # GPU device access for docling-serve (ROCm / amdgpu)
-  systemd.services.docling-serve.serviceConfig = {
-    SupplementaryGroups = [ "video" "render" ];
-    DeviceAllow = [
-      "/dev/dri/card0 rw"
-      "/dev/dri/renderD128 rw"
-      "/dev/kfd rw"
-    ];
-  };
-
   # PyTorch/ROCm needs amdgpu.ids on disk — see NixOS wiki AMD_GPU.
   systemd.tmpfiles.rules = [
     "L+    /opt/amdgpu/share/libdrm/amdgpu.ids   -    -    -     -    ${pkgs.libdrm}/share/libdrm/amdgpu.ids"
@@ -252,11 +221,6 @@ in
 
   # ── Nix settings ─────────────────────────────────────────────
   sops.secrets = {
-    docling-key = {
-      sopsFile = pathRoot + "/secrets/ix.docling.cert-key.sops";
-      format = "binary";
-      owner = config.services.caddy.user;
-    };
     llm-key = {
       sopsFile = pathRoot + "/secrets/ix.llm.cert-key.sops";
       format = "binary";
