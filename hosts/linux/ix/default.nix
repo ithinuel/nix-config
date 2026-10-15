@@ -16,6 +16,7 @@ in
 {
   imports = [
     ./disk.nix
+    ./llm.nix
     "${inputs.nixpkgs-unstable}/nixos/modules/services/misc/comfyui.nix"
     "${inputs.nixpkgs-unstable}/nixos/modules/services/continuous-integration/forgejo-runner.nix"
   ];
@@ -24,6 +25,7 @@ in
   nixpkgs.hostPlatform = "x86_64-linux";
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.rocmSupport = true;
+  nixpkgs.overlays = [ inputs.llama-cpp.overlays.default ];
 
   hardware = {
     enableAllFirmware = true;
@@ -173,18 +175,6 @@ in
     hardware.openrgb.enable = true;
     gnome.games.enable = true;
 
-    # llama-cpp — ROCm backend (auto-detected on AMD)
-    llama-cpp =
-      let
-        mmproj-size-counted-twice = inputs.llama-cpp-28233;
-      in
-      {
-        enable = true;
-        package = unstable_pkgs.llama-cpp.overrideAttrs (oldAttrs: {
-          patches = oldAttrs.patches ++ [ mmproj-size-counted-twice ];
-        });
-      } // (import ./llama-cpp-config.nix);
-
     # ComfyUI — stable diffusion / image generation (ROCm)
     comfyui = {
       enable = false;
@@ -254,4 +244,6 @@ in
     sudo.wheelNeedsPassword = false;
     tpm2.enable = true;
   };
+
+  programs.nix-ld.enable = true;
 }

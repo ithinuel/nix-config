@@ -16,8 +16,14 @@
     utils.url = "github:numtide/flake-utils";
     treefmt.url = "github:numtide/treefmt-nix";
 
-    llama-cpp-28233.url = "https://github.com/ggml-org/llama.cpp/commit/c94e58d21f7c773f7fb772e6041d81f4aac252d5.patch";
+    llama-cpp.url = "github:ggml-org/llama.cpp/b11606";
+    llama-cpp.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    llama-cpp-28233.url = "https://github.com/ggml-org/llama.cpp/commit/541230b0c375576d1d78d344e0933a2381547345.patch";
     llama-cpp-28233.flake = false;
+
+    # Strix Halo inference engine. No nixpkgs follows: its own lock pins the
+    # qualified GCC 15.3 / ROCm 7.2.3 toolchain.
+    gufo.url = "github:gufo-org/gufo/v0.15.1";
 
     gdb-dashboard.url = "github:cyrus-and/gdb-dashboard/v0.17.5";
     gdb-dashboard.flake = false;
@@ -221,15 +227,13 @@
           macos-desktop
           personal-desktop
           personal
-        ]) ++ [
-          {
-            programs.ssh = {
-              enable = true;
-              enableDefaultConfig = false;
-              settings.tleilax.ForwardAgent = "yes";
-            };
-          }
-        ];
+        ]) ++ [{
+          programs.ssh = {
+            enable = true;
+            enableDefaultConfig = false;
+            settings.tleilax.ForwardAgent = "yes";
+          };
+        }];
       };
 
       darwinConfigurations.ithinuel-air = mkDarwinSystem "ithinuel" "ithinuel-air";
