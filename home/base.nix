@@ -177,6 +177,7 @@ in
     opencode = {
       enable = true;
       package = inputs.llm-agents.packages.${system}.opencode2;
+      context = ./opencode/instructions.md;
     };
     ripgrep = {
       enable = true;
