@@ -1,5 +1,10 @@
 { pkgs, lib, username, inputs, ... }:
 let
+  unstable_pkgs = import inputs.nixpkgs-unstable {
+    inherit (pkgs) config;
+    inherit (pkgs.stdenv.hostPlatform) system;
+  };
+
   # llama-swap listens on 8080; Caddy proxies llm.home.ithinuel.me -> localhost:8080.
   port = 8080;
 
@@ -143,10 +148,17 @@ in
 
   services.llama-swap = {
     enable = true;
+    # llama-swap — the persistent activity store (settings.store.path in llm.nix) needs
+    # >=236; nixos-26.05 pins 224. The rest of the service stays in llm.nix.
+    package = unstable_pkgs.llama-swap;
     listenAddress = "127.0.0.1";
     inherit port;
     settings = {
       healthCheckTimeout = 300;
+
+      # Activity log in a file-backed SQLite DB: request counts and token usage survive
+      store.path = "${dataDir}/llama-swap.sqlite";
+
       models = {
         # Flash-Next on the GGUF shards under dataDir (MTP head fetched under the model
         # dir). /ready gates on model load, unlike /health which is liveness-only.
