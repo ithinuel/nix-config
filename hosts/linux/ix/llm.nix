@@ -5,210 +5,331 @@ let
     inherit (pkgs.stdenv.hostPlatform) system;
   };
 
-  # llama-swap listens on 8080; Caddy proxies llm.home.ithinuel.me -> localhost:8080.
+  # Caddy fronts llama-swap as llm.home.ithinuel.me.
   port = 8080;
 
-  # llama.cpp router server; llama-swap proxies the llama.cpp model ids to it.
-  routerPort = 8081;
-
-  # The llama-swap unit's StateDirectory; see the service overrides below.
-  # Named strata-data after the engine it was created for; kept as-is so the
-  # model data on ix does not need migrating.
+  # Runtime state: sqlite activity store, Gufo disk cache, engine logs.
+  # Model bytes are read straight from the Nix store.
   dataDir = "/var/lib/strata-data";
 
-  # Gufo — Strix Halo engine serving Flash-Next. The release output is the
-  # tagged-build package; mkGufoServe renders the `gufo serve` command line.
-  # port = "\${PORT}" is passed through raw (mk-serve.nix treats $-prefixed
-  # strings as env-var substitutions), which is how llama-swap assigns the port.
+  # Gufo — Strix Halo engine, serves Flash-Next.
   gufoPkg = inputs.gufo.packages.x86_64-linux.release;
   gufoServe = inputs.gufo.lib.mkGufoServe;
 
-  # The mmproj-size-counted-twice fix (llama.cpp PR 28233) is not upstream yet, so the
-  # router runs this override of nixpkgs' ROCm build.
+  # The mmproj-size-counted-twice fix (llama.cpp PR 28233) is not upstream yet, so
+  # the llama-server processes run this override of nixpkgs' ROCm build.
   llamaServer = pkgs.llama-cpp.overrideAttrs {
     patches = [ inputs.llama-cpp-28233 ];
   };
+  llamaServerExe = lib.getExe' llamaServer "llama-server";
 
-  # The llama.cpp router presets — services.llama-cpp.modelsPreset below; the module
-  # converts them to an INI file fed to --models-preset. Keys are the model ids clients
-  # use; inner keys are llama-server argument names. Note llama-server canonicalizes the
-  # section name's quant tag (repo:UD-Q8_K_XL -> repo:Q8_K_XL), so the UD- presets carry
-  # an explicit alias for the full id — that is what llama-swap forwards. (gemma's id is
-  # already canonical; aliasing it to itself would conflict.)
-  modelsPreset = {
-    "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:UD-Q4_K_XL" = {
-      hf-repo = "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:UD-Q4_K_XL";
-      temperature = 0.6;
-      top-p = 0.95;
-      top-k = 20;
-      min-p = 0.0;
-      presence-penalty = 0.0;
-      repeat-penalty = 1.0;
-      flash-attn = "on";
+  # nix-hug fetchModels pins: every weight is a store path, deduplicated
+  # across repos and never re-fetched behind our back.
+  nixHug = inputs.nix-hug.lib.${pkgs.stdenv.hostPlatform.system};
 
-      # This causes the model to spiral in thinking loops.
-      #chat-template-kwargs = "{\"preserve_thinking\": \"true\"}";
-
-      # enable MTP
-      spec-type = "draft-mtp,ngram-mod";
-      spec-draft-n-max = 5;
-      # MTP + ngram-mod with p-min for creative long-form
-      spec-draft-p-min = 0.75;
-
-      cache-type-k = "q8_0";
-      cache-type-v = "q8_0";
-
-      # enable 1M context with RoPE
-      rope-scaling = "yarn";
-      rope-scale = 4;
-      yarn-orig-ctx = 256 * 1024;
-      ctx-size = 1024 * 1024;
+  # Fetches exactly the files listed under `files` and returns the pin's store
+  # path with `files` attached for the engines below. Refresh a pin with:
+  #   nix run github:eordano/nix-hug -- fetch <repo> --ref <rev> --file <path> [--file …]
+  # then paste rev/fileTreeHash/gitRepoHash in and re-check `files`.
+  mkPin = { repoId, rev, fileTreeHash, gitRepoHash, files }:
+    (nixHug.fetchModel {
+      inherit repoId rev fileTreeHash gitRepoHash;
+      filters.files =
+        if files ? shards then files.shards ++ [ files.mtp files.mmproj ]
+        else [ files.model ] ++ lib.optionals (files ? mmproj) [ files.mmproj ]
+        ++ lib.optionals (files ? mtp) [ files.mtp ];
+    })
+    // {
+      inherit files;
     };
 
-    # Champion: UD-Q4_K_XL + K+V q4_0 KV + draft-mtp,ngram-mod n=12/n-min=24
-    # Speed: cold 59.7 tok/s | prose 11-14 | code 30-40 | tpt 7.9-14.3s/task
-    # Context: 1M via yarn (262k is the measured sweet spot, yarn available for long docs)
-    "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL" = {
-      hf-repo = "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL";
+  # Engines render a model block into a llama-swap entry: one process bound to
+  # the ${PORT} llama-swap substitutes at spawn, keyed by the block's id. No
+  # ttl — models stay resident until the matrix evicts them or
+  # POST /api/models/unload frees them by hand.
+  llamaEngine = { id, drv, args }: {
+    cmd = lib.concatStringsSep " " (
+      [
+        llamaServerExe
+        "--host 127.0.0.1"
+        "--port \${PORT}"
+        # without this llama-server names the model after the store path
+        "--alias ${lib.escapeShellArg id}"
+        "--model ${lib.escapeShellArg "${drv}/${drv.files.model}"}"
+      ]
+      ++ lib.optionals (drv.files ? mmproj) [
+        "--mmproj ${lib.escapeShellArg "${drv}/${drv.files.mmproj}"}"
+      ]
+      # quants without MTP layers (gemma) speculate with an external head
+      ++ lib.optionals (drv.files ? mtp) [
+        "--model-draft ${lib.escapeShellArg "${drv}/${drv.files.mtp}"}"
+      ]
+      ++ lib.mapAttrsToList (k: v: "--${k} ${lib.escapeShellArg (toString v)}") args
+    );
+  };
 
-      temp = 1.0;
-      top-p = 0.95;
-      top-k = 20;
-      min-p = 0;
-      presence-penalty = 0.0;
-      repeat-penalty = 1.0;
+  # Gufo serves the first shard (siblings are picked up next to it) and
+  # speculates with the MTP head when the pin carries one. /ready waits for the
+  # model load, unlike liveness-only /health; servedModelName must match the
+  # llama-swap id.
+  gufoEngine = { id, drv, args }: {
+    cmd = gufoServe (
+      {
+        gufo = gufoPkg;
+        port = "\${PORT}";
+        model = "${drv}/${builtins.head drv.files.shards}";
+        servedModelName = id;
+      }
+      // args
+      // lib.optionalAttrs (drv.files ? mtp) {
+        speculative = "mtp";
+        mtpModel = "${drv}/${drv.files.mtp}";
+      }
+    );
+    checkEndpoint = "/ready";
+  };
 
-      # Context: 256K native (no yarn — repo's 262k needle-exact ceiling).
-      # KV cache: q4_0 (saves ~4.3GB vs f16, no quality loss).
-      cache-type-k = "q4_0";
-      cache-type-v = "q4_0";
-      ctx-size = 256 * 1024;
+  # Each block becomes its own llama-swap model, keyed by the id clients use.
+  modelsPreset = {
+    "unsloth/Qwen3.5-9B-GGUF:Q4_K_XL" = {
+      engine = llamaEngine;
+      drv = mkPin {
+        repoId = "unsloth/Qwen3.5-9B-GGUF";
+        rev = "3885219b6810b007914f3a7950a8d1b469d598a5";
+        fileTreeHash = "sha256-TPR749YkoRQdtGvbahWLsiqZiivsUf5DhhfLpa6UeyI=";
+        gitRepoHash = "sha256-DgRqlM3pDsUyqGNM0CZDxXXTEP/BjmdW9XsqGk0Jnu8=";
+        files = {
+          model = "Qwen3.5-9B-UD-Q4_K_XL.gguf";
+          mmproj = "mmproj-BF16.gguf";
+        };
+      };
+      args = {
+        cache-type-k = "q8_0";
+        cache-type-v = "q8_0";
 
-      # Speculative decoding: MTP + ngram-mod (measured champion, stacked losslessly)
-      # n-max=12 is peak (n16 regresses); n-min=24 is plateau
-      # Time-per-task: 7.9-14.3s (median 11.3), 15/15 correct
-      # +27% long-form/storytelling at ~10% code cost
-      # Mechanism: truncates low-confidence MTP drafts -> better acceptance on diverse text
-      spec-type = "draft-mtp,ngram-mod";
-      spec-draft-n-max = 12;
-      # MTP + ngram-mod with p-min for creative long-form
-      spec-draft-p-min = 0.75;
+        # fit_params would auto-size the KV cache to fill all memory at load
+        # time — permanent without ttl, and load-order dependent.
+        ctx-size = 128 * 1024;
+      };
+    };
 
-      # Rollback when MTP prediction is rejected
-      ctx-checkpoints = 8;
-      checkpoint-min-step = 32768;
+    "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:Q4_K_XL" = {
+      engine = llamaEngine;
+      drv = mkPin {
+        repoId = "unsloth/Qwen3.6-35B-A3B-MTP-GGUF";
+        rev = "5bc3e238d916f48a861bac2f8a1990a0e9b7e98d";
+        fileTreeHash = "sha256-8gC7LFtwlOU5egKZd0KLhWskeezaMXgUJO0nJM5mSNQ=";
+        gitRepoHash = "sha256-BfJBPMKRsqJjKiK7f21g0Lb9xZZXjdRuIIXDZbLCZso=";
+        files = {
+          model = "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf";
+          mmproj = "mmproj-BF16.gguf";
+        };
+      };
+      args = {
+        temperature = 0.6;
+        top-p = 0.95;
+        top-k = 20;
+        min-p = 0.0;
+        presence-penalty = 0.0;
+        repeat-penalty = 1.0;
+        flash-attn = "on";
 
-      # Thinking is a hard-lane, not default (byte-stable prefix = 160x TTFT)
-      reasoning = "off";
+        # chat-template-kwargs preserve_thinking=true makes the model spiral
+        # into thinking loops — do not re-enable.
 
-      # Flash attention on (required on ROCm/gfx1151)
-      flash-attn = "on";
+        # MTP + ngram-mod; p-min favors creative long-form.
+        spec-type = "draft-mtp,ngram-mod";
+        spec-draft-n-max = 5;
+        spec-draft-p-min = 0.75;
 
-      # Thread count (CPU threads are not the bottleneck at full GPU offload)
-      threads = 16;
-      spec-ngram-mod-n-min = 24;
+        cache-type-k = "q8_0";
+        cache-type-v = "q8_0";
+
+        # yarn scaling to 1M ctx
+        rope-scaling = "yarn";
+        rope-scale = 4;
+        yarn-orig-ctx = 256 * 1024;
+        ctx-size = 1024 * 1024;
+      };
+    };
+
+    # Champion config from https://github.com/KyaniteLabs/qwen38-27b-strix-halo.
+    "unsloth/Qwen3.8-27B-GGUF:Q4_K_XL" = {
+      engine = llamaEngine;
+      drv = mkPin {
+        repoId = "unsloth/Qwen3.8-27B-GGUF";
+        rev = "4ca720788d1e01f1bff70c033e0d0028fd02e502";
+        fileTreeHash = "sha256-N7PVnYrXCvB05t4xsTZZF6CdSCitgJZa3QQNMDCqrcc=";
+        gitRepoHash = "sha256-eY/zo6QuryVdt2S58qmtehKna92ogQvklTLr6ALXpXA=";
+        files = {
+          model = "Qwen3.8-27B-UD-Q4_K_XL.gguf";
+          mmproj = "mmproj-BF16.gguf";
+        };
+      };
+      args = {
+        temp = 1.0;
+        top-p = 0.95;
+        top-k = 20;
+        min-p = 0;
+        presence-penalty = 0.0;
+        repeat-penalty = 1.0;
+
+        # q4_0 KV saves ~4.3 GB vs f16 with no quality loss; 256K is the
+        # native ceiling (no yarn — 262k is needle-exact).
+        cache-type-k = "q4_0";
+        cache-type-v = "q4_0";
+        ctx-size = 256 * 1024;
+
+        # ngram-mod stacks on MTP; n-max 12 is peak (16 regresses), n-min 24
+        # is a plateau: ~10% code speed traded for long-form gains.
+        spec-type = "draft-mtp,ngram-mod";
+        spec-draft-n-max = 12;
+        spec-draft-p-min = 0.75;
+
+        # rollback when an MTP prediction is rejected
+        ctx-checkpoints = 8;
+        checkpoint-min-step = 32768;
+
+        # thinking is opt-in: a byte-stable prefix keeps TTFT low
+        reasoning = "off";
+
+        # required on ROCm/gfx1151
+        flash-attn = "on";
+
+        threads = 16;
+        spec-ngram-mod-n-min = 24;
+      };
     };
 
     "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL" = {
-      hf-repo = "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL";
-      spec-type = "draft-mtp";
-      spec-draft-n-max = 2;
-      temp = 1.0;
-      top-p = 0.95;
-      top-k = 64;
-      ctx-size = 256 * 1024;
+      engine = llamaEngine;
+      drv = mkPin {
+        repoId = "unsloth/gemma-4-26B-A4B-it-GGUF";
+        rev = "c099eb48e663fd284577b04978a94ffccb261841";
+        fileTreeHash = "sha256-jdA4eUtIUzNU/DrmnM3U6Wai/saA3dZWTHAwEIE5Xnk=";
+        gitRepoHash = "sha256-c3/0V/QY3UtFFJag9jIo66i6z082Z2VQtCTe74E3vCw=";
+        files = {
+          model = "gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf";
+          mmproj = "mmproj-BF16.gguf";
+          # no MTP layers in the quant; draft-mtp needs this external head
+          mtp = "MTP/mtp-gemma-4-26B-A4B-it-Q8_0.gguf";
+        };
+      };
+      args = {
+        spec-type = "draft-mtp";
+        spec-draft-n-max = 2;
+        temp = 1.0;
+        top-p = 0.95;
+        top-k = 64;
+        ctx-size = 256 * 1024;
+      };
+    };
+
+    # Flash-Next on Gufo: 4 shards + the shared Q8_0 MTP head; mmproj is
+    # pinned for future use. cacheDisk must be per-model — Gufo locks its dir
+    # and deletes foreign files in it.
+    "unsloth/Qwen3.8-Flash-Next-GGUF:Q4_K_XL" = {
+      engine = gufoEngine;
+      drv = mkPin {
+        repoId = "unsloth/Qwen3.8-Flash-Next-GGUF";
+        rev = "38bb39ee97821de2c9009abb7e93950eec396e66";
+        fileTreeHash = "sha256-ZjHP3wJwSxZ4K+/EESkSWEYLeI9efwAlrVqn1grv3mM=";
+        gitRepoHash = "sha256-lHr0+/CGLFgJRZCywowkWHARUpmakSqd6VbE2N52wGE=";
+        files = {
+          shards = [
+            "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf"
+            "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf"
+            "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf"
+            "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf"
+          ];
+          mtp = "MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf";
+          mmproj = "mmproj-BF16.gguf";
+        };
+      };
+      args = {
+        # raise once the 262k-context admission reservation is measured
+        sessions = 2;
+        context = 262144;
+        cacheDisk = "${dataDir}/gufo-cache/flash-next";
+      };
     };
   };
+
+  # A model block's key is the llama-swap id; the engine gets it as the
+  # served model name and renders the entry.
+  presetToEntry = id: { drv, engine, args }: engine { inherit id drv args; };
+
+  llamaSwapModels = lib.mapAttrs' (id: b: lib.nameValuePair id (presetToEntry id b)) modelsPreset;
 in
 {
-  # ── llama.cpp router server ────────────────────────────────────
-  # One llama-server hosting all preset models: loads on demand, keeps --models-max
-  # loaded and unloads after --sleep-idle-seconds idle. Besides the preset ids, the
-  # LLAMA_CACHE scan registers the cached GGUFs under their bare-quant ids
-  # (repo:Q8_K_XL & co.), which stay reachable on :8081 only.
-  services.llama-cpp = {
-    enable = true;
-    package = llamaServer;
-    port = routerPort; # host defaults to 127.0.0.1
-    inherit modelsPreset;
-    extraFlags = [ "--models-max" "2" "--sleep-idle-seconds" "1800" ];
-  };
-
-  # Strix Halo ROCm env (HSA_ENABLE_SDMA=0: kernel-hang guard under GTT pressure on UMA;
-  # HSA_XNACK=1: correct memory-fault semantics for GTT pages — see
-  # KyaniteLabs/qwen38-27b-strix-halo).
-  systemd.services.llama-cpp.environment = {
-    HSA_ENABLE_SDMA = "0";
-    HSA_XNACK = "1";
-  };
-
-  # ── llama-swap — the single endpoint ─────────────────────────────
-  # Spawns Gufo on demand and proxies the llama.cpp model ids to the router above.
-  # The nixpkgs module generates the YAML config from settings.
+  # ── llama-swap — the single endpoint ─────────────────────────
+  # Spawns the per-model engines on demand; the matrix router decides
+  # co-residency and eviction. The nixpkgs module renders the YAML config and
+  # validates it (llama-swap -validate) at build time.
 
   services.llama-swap = {
     enable = true;
-    # llama-swap — the persistent activity store (settings.store.path in llm.nix) needs
-    # >=236; nixos-26.05 pins 224. The rest of the service stays in llm.nix.
+    # store.path needs llama-swap >=236; nixos-26.05 pins 224
     package = unstable_pkgs.llama-swap;
     listenAddress = "127.0.0.1";
     inherit port;
     settings = {
       healthCheckTimeout = 300;
 
-      # Activity log in a file-backed SQLite DB: request counts and token usage survive
+      # request counts and token usage survive restarts
       store.path = "${dataDir}/llama-swap.sqlite";
 
-      models = {
-        # Flash-Next on the GGUF shards under dataDir (MTP head fetched under the model
-        # dir). /ready gates on model load, unlike /health which is liveness-only.
-        # servedModelName must match the llama-swap id: gufo 404s unknown model names.
-        # sessions 2 until the 262k-context admission reservation is measured; raise
-        # if memory allows.
-        "unsloth/Qwen3.8-Flash-Next-GGUF:Q4_K_XL" = {
-          cmd = gufoServe {
-            gufo = gufoPkg;
-            port = "\${PORT}";
-            model = "${dataDir}/models/unsloth-UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf";
-            speculative = "mtp";
-            mtpModel = "${dataDir}/models/unsloth-UD-Q4_K_XL/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf";
-            servedModelName = "unsloth/Qwen3.8-Flash-Next-GGUF:Q4_K_XL";
-            sessions = 2;
-            context = 262144;
-            # Per-model dir: Flash-Next locks its cache dir and deletes foreign files in it.
-            cacheDisk = "${dataDir}/gufo-cache/flash-next";
+      models = llamaSwapModels;
+
+      routing.router = {
+        use = "matrix";
+        settings.matrix = {
+          vars = {
+            qw35 = "unsloth/Qwen3.5-9B-GGUF:Q4_K_XL";
+            qw36 = "unsloth/Qwen3.6-35B-A3B-MTP-GGUF:Q4_K_XL";
+            qw3827 = "unsloth/Qwen3.8-27B-GGUF:Q4_K_XL";
+            gemma = "unsloth/gemma-4-26B-A4B-it-GGUF:Q4_K_XL";
+            qw38FN = "unsloth/Qwen3.8-Flash-Next-GGUF:Q4_K_XL";
           };
-          checkEndpoint = "/ready";
-          ttl = 1800;
+          # cold-start cost weights: Gufo loads slowest, then 27B
+          evict_costs = {
+            qw38FN = 50;
+            qw3827 = 30;
+          };
+          # A model outside every set can only run alone, so gemma requests
+          # evict the hot combo. The two qw36 variants share weights, so only
+          # one appears in a set — the other evicts instead of double-resident.
+          sets = {
+            code_and_docs = "(qw35 & (qw36 | qw3827 | gemma)) | qw38FN";
+          };
         };
-      }
-      # The router serves every preset id itself and loads/evicts on its own schedule,
-      # so llama-swap just forwards — no per-model process, ttl or env here.
-      // lib.mapAttrs (_name: _preset: { proxy = "http://127.0.0.1:${toString routerPort}"; }) modelsPreset;
+      };
     };
   };
 
-  # Deviations from the module's unit: it runs a hardened DynamicUser, but the Gufo
-  # engine it spawns needs ithinuel's video/render groups for /dev/kfd and write access
-  # to the model data and engine log under the StateDirectory. (KillMode=control-group,
-  # under which the gufo server SIGTERMs its engine, is the systemd default.)
+  # ROCm env for the spawned engines, per KyaniteLabs/qwen38-27b-strix-halo:
+  # SDMA guard against kernel hangs under GTT pressure on UMA; XNACK for
+  # correct memory-fault semantics on GTT pages.
+  systemd.services.llama-swap.environment = {
+    HSA_ENABLE_SDMA = "0";
+    HSA_XNACK = "1";
+  };
+
+  # The module's unit is hardened (DynamicUser); the engines it spawns need
+  # ithinuel's video/render groups for /dev/kfd and write access to dataDir,
+  # plus W+X mappings (ROCm HSA/JIT) and real supplementary groups — hence
+  # MemoryDenyWriteExecute and PrivateUsers are dropped.
   systemd.services.llama-swap = {
     after = [
       "network-online.target"
       "systemd-userdbd.service"
-      "llama-cpp.service"
     ];
     wants = [ "network-online.target" ];
     serviceConfig = {
-      # ithinuel: video/render for /dev/kfd (ROCm), and owner of dataDir.
       User = username;
       DynamicUser = lib.mkForce false;
-      # ProtectSystem=strict (module): dataDir is the only writable home for the
-      # model data and the engine log.
       StateDirectory = "strata-data";
       WorkingDirectory = lib.mkForce dataDir;
-      # ROCm needs W+X mappings (HSA/JIT), which MemoryDenyWriteExecute forbids, and
-      # real supplementary groups on /dev/kfd, which PrivateUsers strips.
       MemoryDenyWriteExecute = lib.mkForce false;
       PrivateUsers = lib.mkForce false;
     };

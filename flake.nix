@@ -9,6 +9,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     mac-app-util.url = "github:ithinuel/mac-app-util/fix/missing-icons";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
+    nix-hug.url = "github:eordano/nix-hug";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
@@ -34,6 +35,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-hug.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     treefmt.inputs.nixpkgs.follows = "nixpkgs";
