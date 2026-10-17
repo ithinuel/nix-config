@@ -241,7 +241,6 @@ in
 
   security = {
     pki.certificateFiles = [ "${pathRoot}/certs/home.ca.pem" ];
-    sudo.wheelNeedsPassword = false;
     tpm2.enable = true;
   };
 
