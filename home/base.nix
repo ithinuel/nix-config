@@ -337,7 +337,7 @@ in
 
         oc = "opencode2";
         occ = "opencode2 -c";
-        opencode = "opencode";
+        opencode = "opencode2";
       };
 
       history = {
@@ -353,6 +353,40 @@ in
         plugins = [ "git" ];
       };
     };
+  };
+
+  # OpenCode V2 CLI/TUI settings. The programs.opencode module only covers
+  # opencode.json (and V1's tui.json); keybinds live in cli.json.
+  # Session scrolling keeps ctrl+g / alt+home / ctrl+alt+g as alternatives.
+  xdg.configFile."opencode/cli.json".text = builtins.toJSON {
+    "$schema" = "https://opencode.ai/v2/cli.json";
+    keybinds = {
+      "input.line.home" = "home";
+      "input.line.end" = "end";
+      "input.buffer.home" = "ctrl+a";
+      "input.buffer.end" = "ctrl+e";
+      "session.first" = "ctrl+g,alt+home,ctrl+shift+home";
+      "session.last" = "ctrl+alt+g,ctrl+shift+end";
+    };
+    animations = true;
+    attention = {
+      notifications = true;
+      sound = true;
+      volume = 0.8;
+    };
+    diffs.single = true;
+    prompt.image_preview = true;
+    scroll.acceleration = true;
+    session = {
+      sidebar = "auto";
+      scrollbar = true;
+      thinking = "hide";
+      image_preview = true;
+      permissions = "prompt";
+      new_location = "inherit";
+      verbosity = "low";
+    };
+    terminal.copy = "select";
   };
 
   services.home-manager.autoExpire.enable = isLinux;
