@@ -1,29 +1,57 @@
 keys:
   - &at_ithinuel F1DA07835BA76FA450BBCA2B0BC4C0B2B0879D6A
-  - &at_work 9F2D999DD7C7CCCFA7A5B357FD66024FC8A1D433
   - &tleilax age139cukquufmk8yt9zg5s07z8sw6kdcwxr59zntmumd682c96wde7sq4a8v5
   - &tleilax_user age1qkzwzwutk8ddylflts5r7qvu7lhgr0zeh880r9tu8fsg3g5s84wsjep8vh
   - &ix age13gm6x5tru5x48yhvgwvwrc5grfnu8cpdlpd39jy6dpsmt9u2qq2qjfd7v6
   - &ix_user age1vy6utcttelw3ykae97ms0v9s8ph6g96q892hc45qhftvpt2cs58q7ggjj8
+
+# Naming grammar: see secrets/README.md
+#   ${scope}[.${who}].${function}[.${subject}].enc.${format}
+# scope is a hostname or the reserved literal `global`; first matching rule wins:
+#   - who present (username, or `users` under global) => unlocked by those keys
+#   - who absent => unlocked by the scope's machine keys
+#     (that host's key; all hosts' keys under global)
+# When onboarding a host or user: add their keys to the groups below,
+# then `sops rotate` every global.* secret whose group changed.
 creation_rules:
-  - path_regex: secrets/tleilax\.obsidian-mcp-key\.sops
+  # User-unlocked secrets (username in slot 2); must precede the host rules
+  - path_regex: secrets/tleilax\.ithinuel\..*
     pgp: *at_ithinuel
     age: *tleilax_user
-  - path_regex: secrets/tleilax\..*\.sops
+  - path_regex: secrets/ix\.ithinuel\..*
+    pgp: *at_ithinuel
+    age: *ix_user
+
+  # Host-unlocked secrets
+  - path_regex: secrets/tleilax\..*
     pgp: *at_ithinuel
     age: *tleilax
-  - path_regex: secrets/ix\..*\.(sops|enc\.yaml)
+  - path_regex: secrets/ix\..*
     pgp: *at_ithinuel
     age: *ix
-  - path_regex: secrets/allowed_signers.sops
+
+  # Portable user-unlocked secrets (all users' keys, all hosts);
+  # must precede the broad global rule. Group: every per-host user key.
+  - path_regex: secrets/global\.users\..*
     key_groups:
       - pgp:
           - *at_ithinuel
         age:
           - *tleilax_user
           - *ix_user
-  - path_regex: secrets/.*$
+
+  # Portable host-unlocked secrets (all hosts' keys). Group: every host key.
+  # `global.<username>.*` (per-person portable) gets its own rule when used.
+  - path_regex: secrets/global\..*
     key_groups:
       - pgp:
           - *at_ithinuel
-          - *at_work
+        age:
+          - *tleilax
+          - *ix
+
+  # Everything else
+  - path_regex: secrets/.*
+    key_groups:
+      - pgp:
+          - *at_ithinuel

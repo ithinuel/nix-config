@@ -98,7 +98,7 @@ in
   nixpkgs.hostPlatform = lib.mkForce "x86_64-linux";
 
   sops.secrets.store-key = lib.mkDefault {
-    sopsFile = pathRoot + "/secrets/tleilax.legacy-nixbox.store-key.sops";
+    sopsFile = pathRoot + "/secrets/tleilax.legacy-nixbox.store-key.enc.txt";
     format = "binary";
     mode = "0400";
   };

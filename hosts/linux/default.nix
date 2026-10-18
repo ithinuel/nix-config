@@ -16,12 +16,12 @@
   networking.hostName = lib.mkDefault hostname;
 
   sops.secrets.password = lib.mkDefault {
-    sopsFile = pathRoot + "/secrets/${hostname}.${username}.pass.sops";
+    sopsFile = pathRoot + "/secrets/${hostname}.pass.${username}.enc.txt";
     format = "binary";
     neededForUsers = true;
   };
   sops.secrets.age-key = lib.mkDefault {
-    sopsFile = pathRoot + "/secrets/${hostname}.${username}.age.sops";
+    sopsFile = pathRoot + "/secrets/${hostname}.agekey.${username}.enc.txt";
     format = "binary";
     owner = username;
     mode = "0600";

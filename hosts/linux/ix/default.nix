@@ -212,17 +212,17 @@ in
   # ── Nix settings ─────────────────────────────────────────────
   sops.secrets = {
     llm-key = {
-      sopsFile = pathRoot + "/secrets/ix.llm.cert-key.sops";
+      sopsFile = pathRoot + "/secrets/ix.llm.cert-key.enc.pem";
       format = "binary";
       owner = config.services.caddy.user;
     };
     comfyui-key = {
-      sopsFile = pathRoot + "/secrets/ix.comfyui.cert-key.sops";
+      sopsFile = pathRoot + "/secrets/ix.comfyui.cert-key.enc.pem";
       format = "binary";
       owner = config.services.caddy.user;
     };
     forgejo-runner = {
-      sopsFile = pathRoot + "/secrets/ix.forgejo.secrets.enc.yaml";
+      sopsFile = pathRoot + "/secrets/ix.secrets.forgejo.enc.yaml";
       format = "yaml";
       key = "token";
     };

@@ -8,7 +8,7 @@ in
 {
   sops.age.keyFile = homeDirectory + "/.config/sops/age/keys.txt";
   sops.secrets.allowed_signers = {
-    sopsFile = pathRoot + "/secrets/allowed_signers.sops";
+    sopsFile = pathRoot + "/secrets/global.users.allowed-signers.enc.txt";
     format = "binary";
   };
 

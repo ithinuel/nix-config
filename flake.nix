@@ -208,7 +208,7 @@
           ({ config, ... }: {
             nixpkgs.config = { cudaSupport = true; };
             sops.secrets.obsidian-mcp-key = {
-              sopsFile = pathRoot + "/secrets/tleilax.obsidian-mcp-key.sops";
+              sopsFile = pathRoot + "/secrets/tleilax.ithinuel.obsidian-mcp-key.enc.yaml";
               key = "data";
             };
             programs.opencode.settings.mcp = {
