@@ -204,19 +204,25 @@
         ];
       };
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
-        modules = [{
-          nixpkgs.config = { cudaSupport = true; };
-          programs.opencode.settings.mcp = {
-            obsidian = {
-              enabled = true;
-              type = "remote";
-              url = "http://127.0.0.1:27124/mcp/";
-              headers = {
-                Authorization = "Bearer 853083c1b30d9425a665c34aaa037173db431e41a4114f336243ab6e03844264";
+        modules = [
+          ({ config, ... }: {
+            nixpkgs.config = { cudaSupport = true; };
+            sops.secrets.obsidian-mcp-key = {
+              sopsFile = pathRoot + "/secrets/tleilax.obsidian-mcp-key.sops";
+              key = "data";
+            };
+            programs.opencode.settings.mcp = {
+              obsidian = {
+                enabled = true;
+                type = "remote";
+                url = "http://127.0.0.1:27124/mcp/";
+                headers = {
+                  Authorization = "Bearer {file:${config.sops.secrets.obsidian-mcp-key.path}}";
+                };
               };
             };
-          };
-        }] ++ (with homeProfiles; [
+          })
+        ] ++ (with homeProfiles; [
           base-desktop
           linux-desktop
           personal-desktop

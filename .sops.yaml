@@ -6,6 +6,9 @@ keys:
   - &ix age13gm6x5tru5x48yhvgwvwrc5grfnu8cpdlpd39jy6dpsmt9u2qq2qjfd7v6
   - &ix_user age1vy6utcttelw3ykae97ms0v9s8ph6g96q892hc45qhftvpt2cs58q7ggjj8
 creation_rules:
+  - path_regex: secrets/tleilax\.obsidian-mcp-key\.sops
+    pgp: *at_ithinuel
+    age: *tleilax_user
   - path_regex: secrets/tleilax\..*\.sops
     pgp: *at_ithinuel
     age: *tleilax
