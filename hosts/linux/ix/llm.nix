@@ -270,7 +270,13 @@ in
   services.llama-swap = {
     enable = true;
     # store.path needs llama-swap >=236; nixos-26.05 pins 224
-    package = unstable_pkgs.llama-swap;
+    # llama-swap 263 implemented a gufoProbe to gather the model’s metadata.
+    package = unstable_pkgs.llama-swap.overrideAttrs (_final: prev: {
+      version = "265";
+      src = prev.src.overrideAttrs (_: {
+        hash = "sha256-8NIsLxYTxax0q1uMwwh2W8nQwBUpY05Cqophr+LTdOQ=";
+      });
+    });
     listenAddress = "127.0.0.1";
     inherit port;
     settings = {
