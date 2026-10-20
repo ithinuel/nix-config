@@ -5,10 +5,6 @@ let
     # TODO: Replace with something more useful (e.g. email, webhook).
     echo "mdadm: $@" >> /var/log/mdadm-events.log
   '';
-  unstable_pkgs = import inputs.nixpkgs-unstable {
-    inherit (pkgs) config;
-    inherit (pkgs.stdenv.hostPlatform) system;
-  };
 
   # Forgejo runner Docker image: Nix + Node.js (for JS actions like actions/checkout@v4)
   nix-node-image = import ./nix-node-image.nix { inherit pathRoot pkgs; };
