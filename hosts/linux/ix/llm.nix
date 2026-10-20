@@ -16,12 +16,7 @@ let
   gufoPkg = inputs.gufo.packages.x86_64-linux.release;
   gufoServe = inputs.gufo.lib.mkGufoServe;
 
-  # The mmproj-size-counted-twice fix (llama.cpp PR 28233) is not upstream yet, so
-  # the llama-server processes run this override of nixpkgs' ROCm build.
-  llamaServer = pkgs.llama-cpp.overrideAttrs {
-    patches = [ inputs.llama-cpp-28233 ];
-  };
-  llamaServerExe = lib.getExe' llamaServer "llama-server";
+  llamaServerExe = lib.getExe' pkgs.llama-cpp "llama-server";
 
   # nix-hug fetchModels pins: every weight is a store path, deduplicated
   # across repos and never re-fetched behind our back.

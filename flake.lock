@@ -368,30 +368,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1791915739,
-        "narHash": "sha256-7kli7M6qHjmpxG3Ho4rumAIUpFX6K1aopid77bNshPQ=",
+        "lastModified": 1792529325,
+        "narHash": "sha256-KOKjZe1rrkOSDC35igGkENLp7ZAc6d2zZZk1cJPNV4U=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "1b70350c92563449576bcbbf552994b1d1ed847d",
+        "rev": "52ffa027455662ea59f78d0e4e5a8f38ee63a5fe",
         "type": "github"
       },
       "original": {
         "owner": "ggml-org",
-        "ref": "b11606",
+        "ref": "master",
         "repo": "llama.cpp",
         "type": "github"
-      }
-    },
-    "llama-cpp-28233": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-O2D8qhzuqQMqutFYvhiZIBoAASTrJ+XFgKHo2eOUDuA=",
-        "type": "file",
-        "url": "https://github.com/ggml-org/llama.cpp/commit/541230b0c375576d1d78d344e0933a2381547345.patch"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/ggml-org/llama.cpp/commit/541230b0c375576d1d78d344e0933a2381547345.patch"
       }
     },
     "llm-agents": {
@@ -647,11 +635,11 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1790340521,
-        "narHash": "sha256-cRrWlIjVRJ6BHDr9caUdXsZ3owzWIKYHpNmGPHBInIU=",
+        "lastModified": 1792503283,
+        "narHash": "sha256-vhe2jyvRCgufWPqDuDq1S3t3ypE+ka46IFutV02xKso=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f5c082a40f7571c266e74e80ae2e68aadd8a9fc7",
+        "rev": "cd4ea8d57de16f4810bc5f14207bac45fbf19f67",
         "type": "github"
       },
       "original": {
@@ -715,7 +703,6 @@
         "home-manager": "home-manager",
         "lanzaboote": "lanzaboote",
         "llama-cpp": "llama-cpp",
-        "llama-cpp-28233": "llama-cpp-28233",
         "llm-agents": "llm-agents",
         "mac-app-util": "mac-app-util",
         "nix-darwin": "nix-darwin",

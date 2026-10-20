@@ -18,10 +18,8 @@
     treefmt.url = "github:numtide/treefmt-nix";
     utils.url = "github:numtide/flake-utils";
 
-    llama-cpp.url = "github:ggml-org/llama.cpp/b11606";
+    llama-cpp.url = "github:ggml-org/llama.cpp/master";
     llama-cpp.inputs.nixpkgs.follows = "nixpkgs-unstable";
-    llama-cpp-28233.url = "https://github.com/ggml-org/llama.cpp/commit/541230b0c375576d1d78d344e0933a2381547345.patch";
-    llama-cpp-28233.flake = false;
 
     # Strix Halo inference engine. No nixpkgs follows: its own lock pins the
     # qualified GCC 15.3 / ROCm 7.2.3 toolchain.
