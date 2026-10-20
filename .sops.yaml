@@ -4,6 +4,8 @@ keys:
   - &tleilax_user age1qkzwzwutk8ddylflts5r7qvu7lhgr0zeh880r9tu8fsg3g5s84wsjep8vh
   - &ix age13gm6x5tru5x48yhvgwvwrc5grfnu8cpdlpd39jy6dpsmt9u2qq2qjfd7v6
   - &ix_user age1vy6utcttelw3ykae97ms0v9s8ph6g96q892hc45qhftvpt2cs58q7ggjj8
+  - &octoprint age1dmejnvagm82fa6u0csst3ep4qwvvvvttqd8ygngyqlu9zrvcna6qqcsh4x
+  - &octoprint_user age1zzpvdxhjxrm5rzr0k37vtgp7v5emkuzjvnzhhu3p68zg4a7ldvms2utwt9
 
 # Naming grammar: see secrets/README.md
 #   ${scope}[.${who}].${function}[.${subject}].enc.${format}
@@ -21,6 +23,9 @@ creation_rules:
   - path_regex: secrets/ix\.ithinuel\..*
     pgp: *at_ithinuel
     age: *ix_user
+  - path_regex: secrets/octoprint\.ithinuel\..*
+    pgp: *at_ithinuel
+    age: *octoprint_user
 
   # Host-unlocked secrets
   - path_regex: secrets/tleilax\..*
@@ -29,6 +34,9 @@ creation_rules:
   - path_regex: secrets/ix\..*
     pgp: *at_ithinuel
     age: *ix
+  - path_regex: secrets/octoprint\..*
+    pgp: *at_ithinuel
+    age: *octoprint
 
   # Portable user-unlocked secrets (all users' keys, all hosts);
   # must precede the broad global rule. Group: every per-host user key.
@@ -39,6 +47,7 @@ creation_rules:
         age:
           - *tleilax_user
           - *ix_user
+          - *octoprint_user
 
   # Portable host-unlocked secrets (all hosts' keys). Group: every host key.
   # `global.<username>.*` (per-person portable) gets its own rule when used.
@@ -49,6 +58,7 @@ creation_rules:
         age:
           - *tleilax
           - *ix
+          - *octoprint
 
   # Everything else
   - path_regex: secrets/.*

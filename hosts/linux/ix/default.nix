@@ -175,32 +175,16 @@ in
     hardware.openrgb.enable = true;
     gnome.games.enable = true;
 
-    # ComfyUI — stable diffusion / image generation (ROCm)
-    comfyui = {
-      enable = false;
-      package = unstable_pkgs.comfyui;
-    };
-
     # Caddy reverse proxy
     caddy = {
       enable = true;
       openFirewall = true;
-      virtualHosts = {
-        "llm.home.ithinuel.me" = {
-          extraConfig = ''
-            tls ${pathRoot + "/certs/llm.pem"} ${config.sops.secrets.llm-key.path}
-            reverse_proxy localhost:8080 {
-              header_up Host localhost:8080
-            }
-          '';
-        };
-        "comfyui.home.ithinuel.me" = {
-          extraConfig = ''
-            tls ${pathRoot + "/certs/comfyui.pem"} ${config.sops.secrets.comfyui-key.path}
-            reverse_proxy localhost:8188
-          '';
-        };
-      };
+      virtualHosts."llm.home.ithinuel.me".extraConfig = ''
+        tls ${pathRoot + "/certs/llm.pem"} ${config.sops.secrets.llm-key.path}
+        reverse_proxy localhost:8080 {
+          header_up Host localhost:8080
+        }
+      '';
     };
   };
 
@@ -213,11 +197,6 @@ in
   sops.secrets = {
     llm-key = {
       sopsFile = pathRoot + "/secrets/ix.llm.cert-key.enc.pem";
-      format = "binary";
-      owner = config.services.caddy.user;
-    };
-    comfyui-key = {
-      sopsFile = pathRoot + "/secrets/ix.comfyui.cert-key.enc.pem";
       format = "binary";
       owner = config.services.caddy.user;
     };

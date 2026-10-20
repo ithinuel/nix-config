@@ -10,12 +10,13 @@
     mac-app-util.url = "github:ithinuel/mac-app-util/fix/missing-icons";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
     nix-hug.url = "github:eordano/nix-hug";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     sops-nix.url = "github:mic92/sops-nix";
-    utils.url = "github:numtide/flake-utils";
     treefmt.url = "github:numtide/treefmt-nix";
+    utils.url = "github:numtide/flake-utils";
 
     llama-cpp.url = "github:ggml-org/llama.cpp/b11606";
     llama-cpp.inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -36,6 +37,7 @@
     mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-hug.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     treefmt.inputs.nixpkgs.follows = "nixpkgs";
@@ -186,7 +188,7 @@
           buildInputs = checks.pre-commit-check.enabledPackages;
         };
       }))
-    // {
+    // rec {
       inherit nixosModules;
       lib = { inherit mkNixosBaseSystem mkDarwinBaseSystem mkHomeManagerConfig homeProfiles; };
       overlays.default = overlays;
@@ -248,5 +250,12 @@
 
       nixosConfigurations.tleilax = mkNixosSystem "ithinuel" "tleilax";
       nixosConfigurations.ix = mkNixosSystem "ithinuel" "ix";
+      nixosConfigurations.octoprint = mkNixosSystem "ithinuel" "octoprint";
+
+      # Replacement SD card for the Pi, built on demand only. Note that a
+      # freshly flashed card generates a *new* SSH host key — a different age
+      # identity — so it cannot open this host’s secrets until that key has
+      # been copied back from the old card.
+      images.octoprint = nixosConfigurations.octoprint.config.system.build.sdImage;
     };
 }

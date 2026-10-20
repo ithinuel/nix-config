@@ -38,8 +38,8 @@ The Nix store on these machines is precious. Avoid frivolous or redundant builds
 
 - Only `tleilax` and `ithinuel-air` have a working copy of this repo in
   `~/.config/home-manager`. The state of that path on **any other machine is not
-  relevant** — hosts like `ix` are managed and deployed remotely from this repo's
-  committed state.
+  relevant** — hosts like `ix` and `octoprint` are managed and deployed remotely from
+  this repo's committed state.
 - Therefore: always make changes in this checkout (on tleilax or ithinuel-air), never by
   editing files in place on other machines. "Fixing" a host means changing its config
   here (`hosts/linux/ix/`, etc.), not touching the machine.
