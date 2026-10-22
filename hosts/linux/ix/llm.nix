@@ -275,6 +275,8 @@ in
     listenAddress = "127.0.0.1";
     inherit port;
     settings = {
+      security.cors.allowedOrigins = [ "https://llm.home.ithinuel.me" ];
+
       healthCheckTimeout = 300;
 
       # request counts and token usage survive restarts
