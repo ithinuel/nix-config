@@ -11,6 +11,7 @@ let
 in
 {
   sops.secrets.ha-mcp-key.sopsFile = pathRoot + "/secrets/global.${username}.ha-mcp-key.enc.yaml";
+  sops.secrets.github-mcp-key.sopsFile = pathRoot + "/secrets/global.${username}.github-mcp-key.enc.yaml";
   programs.opencode.settings = {
     enabled_providers = [ "Ithinuel's AI" "github-copilot" ];
     provider = {
@@ -24,11 +25,19 @@ in
         };
       };
     };
-    mcp.home-assistant = {
-      enabled = true;
-      type = "remote";
-      url = "https://ha.home.ithinuel.me/api/mcp";
-      headers.Authorization = "Bearer {file:${config.sops.secrets.ha-mcp-key.path}}";
+    mcp = {
+      github = {
+        enabled = true;
+        type = "remote";
+        url = "https://api.githubcopilot.com/mcp";
+        headers.Authorization = "Bearer {file:${config.sops.secrets.github-mcp-key.path}}";
+      };
+      home-assistant = {
+        enabled = true;
+        type = "remote";
+        url = "https://ha.home.ithinuel.me/api/mcp";
+        headers.Authorization = "Bearer {file:${config.sops.secrets.ha-mcp-key.path}}";
+      };
     };
   };
   home.packages = [ llm-agents.copilot-cli ];
