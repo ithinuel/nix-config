@@ -49,6 +49,12 @@ creation_rules:
           - *ix_user
           - *octoprint_user
 
+  # Portable user-unlocked secrets (all hosts, specific user’s key);
+  # must precede the broad global rule. Group: every per-host user key.
+  - path_regex: secrets/global\.ithinuel\..*
+    pgp: *at_ithinuel
+    age: *tleilax_user
+
   # Portable host-unlocked secrets (all hosts' keys). Group: every host key.
   # `global.<username>.*` (per-person portable) gets its own rule when used.
   - path_regex: secrets/global\..*

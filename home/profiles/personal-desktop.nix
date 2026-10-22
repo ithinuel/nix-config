@@ -1,12 +1,19 @@
-{ pkgs, lib, ... }:
+{ config, lib, pathRoot, pkgs, username, ... }:
 let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 in
 {
+  sops.secrets.obsidian-mcp-key.sopsFile = pathRoot + "/secrets/global.${username}.obsidian-mcp-key.enc.yaml";
   programs = {
     calibre.enable = isLinux;
     element-desktop.enable = true;
     prismlauncher.enable = true;
+    opencode.settings.mcp.obsidian = {
+      enabled = true;
+      type = "remote";
+      url = "http://127.0.0.1:27124/mcp/";
+      headers.Authorization = "Bearer {file:${config.sops.secrets.obsidian-mcp-key.path}}";
+    };
   };
   home.packages = [
     pkgs.slack
