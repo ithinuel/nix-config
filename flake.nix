@@ -23,7 +23,7 @@
 
     # Strix Halo inference engine. No nixpkgs follows: its own lock pins the
     # qualified GCC 15.3 / ROCm 7.2.3 toolchain.
-    gufo.url = "github:gufo-org/gufo/v0.15.1";
+    gufo.url = "github:gufo-org/gufo/v0.19.0";
 
     gdb-dashboard.url = "github:cyrus-and/gdb-dashboard/v0.17.5";
     gdb-dashboard.flake = false;
@@ -204,25 +204,8 @@
         ];
       };
       homeConfigurations."ithinuel@tleilax" = (mkHomeManagerConfig "ithinuel" "x86_64-linux").extendModules {
-        modules = [
-          ({ config, ... }: {
-            nixpkgs.config = { cudaSupport = true; };
-            sops.secrets.obsidian-mcp-key = {
-              sopsFile = pathRoot + "/secrets/tleilax.ithinuel.obsidian-mcp-key.enc.yaml";
-              key = "data";
-            };
-            programs.opencode.settings.mcp = {
-              obsidian = {
-                enabled = true;
-                type = "remote";
-                url = "http://127.0.0.1:27124/mcp/";
-                headers = {
-                  Authorization = "Bearer {file:${config.sops.secrets.obsidian-mcp-key.path}}";
-                };
-              };
-            };
-          })
-        ] ++ (with homeProfiles; [
+        modules = [{ nixpkgs.config = { cudaSupport = true; }; }]
+        ++ (with homeProfiles; [
           base-desktop
           linux-desktop
           personal-desktop
