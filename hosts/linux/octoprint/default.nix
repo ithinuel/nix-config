@@ -95,7 +95,6 @@
 
   nix.settings.trusted-public-keys = [
     "tleilax-1:TnLV90m+UmVwKCmz2rqH/ED78OrHFQZ79fnKGHQfGdw="
-    "nixbox-1:+RhEM+GSeQmbFCaadAv6fQiuWzAF6f1FW4yuFhfHmYI="
   ];
 
   environment.systemPackages = with pkgs; [
