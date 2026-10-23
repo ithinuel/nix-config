@@ -6,6 +6,8 @@ keys:
   - &ix_user age1vy6utcttelw3ykae97ms0v9s8ph6g96q892hc45qhftvpt2cs58q7ggjj8
   - &octoprint age1dmejnvagm82fa6u0csst3ep4qwvvvvttqd8ygngyqlu9zrvcna6qqcsh4x
   - &octoprint_user age1zzpvdxhjxrm5rzr0k37vtgp7v5emkuzjvnzhhu3p68zg4a7ldvms2utwt9
+  - &mba age1xahxzanp2p70w374fu30ah66v6m03xsprd5hc3deal8dsj3yv5dsjpdceh
+  - &mba_user age1l9vdh7hle2cg9m9qzzg88rdy453zddv9zsq7qnd0atvmkqc0mvqqlkm6nx
 
 # Naming grammar: see secrets/README.md
 #   ${scope}[.${who}].${function}[.${subject}].enc.${format}
@@ -20,6 +22,9 @@ creation_rules:
   - path_regex: secrets/tleilax\.ithinuel\..*
     pgp: *at_ithinuel
     age: *tleilax_user
+  - path_regex: secrets/ithinuel-air\.ithinuel\..*
+    pgp: *at_ithinuel
+    age: *mba_user
   - path_regex: secrets/ix\.ithinuel\..*
     pgp: *at_ithinuel
     age: *ix_user
@@ -31,6 +36,9 @@ creation_rules:
   - path_regex: secrets/tleilax\..*
     pgp: *at_ithinuel
     age: *tleilax
+  - path_regex: secrets/ithinuel-air\..*
+    pgp: *at_ithinuel
+    age: *mba
   - path_regex: secrets/ix\..*
     pgp: *at_ithinuel
     age: *ix
@@ -46,14 +54,19 @@ creation_rules:
           - *at_ithinuel
         age:
           - *tleilax_user
+          - *mba_user
           - *ix_user
           - *octoprint_user
 
   # Portable user-unlocked secrets (all hosts, specific user’s key);
   # must precede the broad global rule. Group: every per-host user key.
   - path_regex: secrets/global\.ithinuel\..*
-    pgp: *at_ithinuel
-    age: *tleilax_user
+    key_groups:
+      - pgp:
+          - *at_ithinuel
+        age:
+          - *tleilax_user
+          - *mba_user
 
   # Portable host-unlocked secrets (all hosts' keys). Group: every host key.
   # `global.<username>.*` (per-person portable) gets its own rule when used.
@@ -63,11 +76,10 @@ creation_rules:
           - *at_ithinuel
         age:
           - *tleilax
+          - *mba
           - *ix
           - *octoprint
 
   # Everything else
   - path_regex: secrets/.*
-    key_groups:
-      - pgp:
-          - *at_ithinuel
+    pgp: *at_ithinuel
