@@ -37,6 +37,7 @@ in
     hardware.openrgb.enable = true;
     xserver.videoDrivers = [ "nvidia" ];
     gnome.games.enable = true;
+    printing.enable = true;
   };
 
   boot = {
