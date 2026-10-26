@@ -8,8 +8,7 @@ in
     calibre.enable = isLinux;
     element-desktop.enable = true;
     prismlauncher.enable = true;
-    opencode.settings.mcp.obsidian = {
-      enabled = true;
+    opencode.settings.mcp.servers.obsidian = {
       type = "remote";
       url = "http://127.0.0.1:27124/mcp/";
       headers.Authorization = "Bearer {file:${config.sops.secrets.obsidian-mcp-key.path}}";
