@@ -17,6 +17,7 @@ in
       { action = "provider.use"; resource = "Ithinuel's AI"; effect = "allow"; }
       { action = "provider.use"; resource = "github-copilot"; effect = "allow"; }
     ];
+    compaction.buffer = "16000";
     providers = {
       "Ithinuel's AI" = {
         package = "@opencode/ai/providers/openai-compatible";
