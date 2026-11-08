@@ -28,6 +28,8 @@ in
   users.users.ithinuel = {
     linger = true;
     extraGroups = [
+      "dialout"
+      "plugdev"
       "scanner"
       "lp"
       "openrazer"

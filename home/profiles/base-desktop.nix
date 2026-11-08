@@ -4,6 +4,8 @@ let
 in
 {
   home.packages = with pkgs; [
+    wl-clipboard
+
     # gui tools
     meld
     obsidian

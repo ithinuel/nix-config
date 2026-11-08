@@ -22,6 +22,7 @@ in
     pkgs.slack
     whatsapp-electron
     zoom-us
+    pkgs.gradia
   ];
 
   programs.obs-studio.enable = true;
