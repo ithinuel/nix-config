@@ -21,7 +21,18 @@ in
   nixpkgs.hostPlatform = "x86_64-linux";
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.rocmSupport = true;
-  nixpkgs.overlays = [ inputs.llama-cpp.overlays.default ];
+  nixpkgs.overlays = [
+    inputs.llama-cpp.overlays.default
+    # llama.cpp's webui build is broken at fc504f9 (importNpmLock drops the
+    # llama-brand dep). Tracked in https://github.com/ggml-org/llama.cpp/issues/32252.
+    # We don't use webui (llama-swap serves its own), disable it. The stub is
+    # needed too: the webui attr is in the builder env even with useWebUi=false.
+    (final: prev: {
+      llama-cpp = (prev.llama-cpp.override { useWebUi = false; }).overrideAttrs (_finalL: _prevL: {
+        webui = final.runCommand "webui-stub" { } "mkdir -p $out";
+      });
+    })
+  ];
 
   hardware = {
     enableAllFirmware = true;
@@ -69,7 +80,7 @@ in
 
   # ── Boot / Secure Boot ───────────────────────────────────────
   boot = {
-    kernelPackages = pkgs.linuxPackages_7_2;
+    kernelPackages = pkgs.linuxPackages_7_3;
 
     # Headless: log mdadm events to syslog.
     swraid.mdadmConf = ''

@@ -50,7 +50,7 @@ in
       enable = true;
       # Entries for obsidian and synology-drive-client are installed by the personal profile.
       entries = [
-        "${pkgs.obsidian}/share/applications/md.obsidian.Obsidian.desktop"
+        "${pkgs.obsidian}/share/applications/obsidian.desktop"
         "${zoom-us}/share/applications/Zoom.desktop"
         "${discord}/discord.desktop"
         "${element}/element-desktop.desktop"
